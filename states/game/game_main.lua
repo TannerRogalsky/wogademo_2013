@@ -2,18 +2,64 @@ local Main = Game:addState('Main')
 
 function Main:enteredState()
   Collider = HC(100, self.on_start_collide, self.on_stop_collide)
+  self:init_control_map()
 end
 
 function Main:update(dt)
+  local mouse_x, mouse_y = self.camera:mousePosition(x, y)
+  for key, action in pairs(self.control_map.mouse.update) do
+    if love.mouse.isDown(key) then action(self, mouse_x, mouse_y) end
+  end
 end
 
 function Main:render()
   self.camera:set()
 
+  g.circle("fill", 100, 100, 20)
+
   self.camera:unset()
 end
 
+function Main:init_control_map()
+  self.control_map = {
+    mouse = {
+      pressed = {
+        r = self.right_mouse_down
+      },
+      released = {
+        r = self.right_mouse_up
+      },
+      update = {
+        r = self.right_mouse_update
+      }
+    },
+    keyboard = {
+      pressed = {},
+      released = {}
+    }
+  }
+end
+
+function Main:right_mouse_down(x, y)
+  self.right_mouse_down_pos = {x = x, y = y}
+end
+
+function Main:right_mouse_up(x, y)
+  self.right_mouse_down_pos = nil
+end
+
+function Main:right_mouse_update(x, y)
+  if self.right_mouse_down_pos then
+    local down = self.right_mouse_down_pos
+    -- x, y = self.camera:mousePosition(x, y)
+    self.camera:setPosition(down.x - x, down.y - y)
+  end
+end
+
 function Main:mousepressed(x, y, button)
+  local mouse_x, mouse_y = self.camera:mousePosition(x, y)
+  local action = self.control_map.mouse.pressed[button]
+  if is_func(action) then action(self, mouse_x, mouse_y) end
 end
 
 function Main:mousereleased(x, y, button)
