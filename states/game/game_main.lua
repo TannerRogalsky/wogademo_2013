@@ -3,6 +3,8 @@ local Main = Game:addState('Main')
 function Main:enteredState()
   Collider = HC(100, self.on_start_collide, self.on_stop_collide)
   self:init_control_map()
+
+  self.grid = Grid:new(100, 100)
 end
 
 function Main:update(dt)
