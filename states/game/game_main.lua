@@ -31,7 +31,9 @@ function Main:init_control_map()
     mouse = {
       pressed = {
         l = self.left_mouse_down,
-        r = self.right_mouse_down
+        r = self.right_mouse_down,
+        wu = self.mouse_wheel_up,
+        wd = self.mouse_wheel_down
       },
       released = {
         l = self.left_mouse_up,
@@ -68,6 +70,14 @@ end
 
 function Main:right_mouse_up(x, y)
   self.right_mouse_down_pos, self.last_mouse_pos = nil, nil
+end
+
+function Main:mouse_wheel_up(x, y)
+  self.camera:setScale(1, 1)
+end
+
+function Main:mouse_wheel_down(x, y)
+  self.camera:setScale(1.25, 1.25)
 end
 
 function Main:right_mouse_update(x, y)
