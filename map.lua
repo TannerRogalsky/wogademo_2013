@@ -58,6 +58,9 @@ end
 
 function Map:render()
   g.draw(self.grid_canvas, 0, 0)
+  for index,entity in self.render_queue:ipairs() do
+    entity:render()
+  end
 end
 
 function Map:add_entity(entity)

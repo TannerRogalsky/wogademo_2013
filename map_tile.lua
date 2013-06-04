@@ -14,7 +14,7 @@ end
 function MapTile:update(dt)
 end
 
-function MapTile:render(x, y)
+function MapTile:render()
 end
 
 function MapTile:cost_to_move_to()

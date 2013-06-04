@@ -5,6 +5,9 @@ function Main:enteredState()
   self:init_control_map()
 
   self.map = Map:new(0, 0, 50, 30, 25, 25)
+  self.entity = MapEntity:new(self.map, 1, 1)
+  self.map:add_entity(self.entity)
+  self.entity.render = function(this) g.rectangle("fill", (this.x - 1) * self.map.tile_width, (this.y - 1) * self.map.tile_height, this.width * self.map.tile_width, this.height * self.map.tile_height) end
 end
 
 function Main:update(dt)
@@ -19,8 +22,6 @@ function Main:render()
   g.setColor(COLORS.white:rgb())
 
   self.map:render()
-
-  g.circle("fill", 100, 100, 20)
 
   self.camera:unset()
 end
@@ -39,7 +40,12 @@ function Main:init_control_map()
       }
     },
     keyboard = {
-      pressed = {},
+      pressed = {
+        up = function(self) self.entity:move(Direction.NORTH:unpack()) end,
+        down = function(self) self.entity:move(Direction.SOUTH:unpack()) end,
+        left = function(self) self.entity:move(Direction.WEST:unpack()) end,
+        right = function(self) self.entity:move(Direction.EAST:unpack()) end
+      },
       released = {}
     }
   }
@@ -72,9 +78,13 @@ function Main:mousereleased(x, y, button)
 end
 
 function Main:keypressed(key, unicode)
+  local action = self.control_map.keyboard.pressed[key]
+  if is_func(action) then action(self, x, y) end
 end
 
 function Main:keyreleased(key, unicode)
+  local action = self.control_map.keyboard.released[key]
+  if is_func(action) then action(self, x, y) end
 end
 
 function Main:joystickpressed(joystick, button)
