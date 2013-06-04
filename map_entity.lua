@@ -1,4 +1,5 @@
 MapEntity = class('MapEntity', Base):include(Stateful)
+MapEntity:include(Movable)
 
 function MapEntity:initialize(parent, x, y, width, height, z)
   Base.initialize(self)
@@ -29,18 +30,6 @@ end
 function MapEntity:remove_from_grid()
   for _, _, tile in self.parent:each(self.x, self.y, self.width, self.height) do
     tile.content[self.id] = nil
-  end
-end
-
-function MapEntity:move(delta_x, delta_y)
-  local new_x, new_y = self.x + delta_x, self.y + delta_y
-
-  -- bounds check
-  if new_x > 0 and new_x <= self.parent.width and
-     new_y > 0 and new_y <= self.parent.height then
-    self:remove_from_grid()
-    self.x, self.y = new_x, new_y
-    self:insert_into_grid()
   end
 end
 
