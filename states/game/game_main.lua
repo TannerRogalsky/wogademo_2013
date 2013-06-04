@@ -4,7 +4,13 @@ function Main:enteredState()
   Collider = HC(100, self.on_start_collide, self.on_stop_collide)
   self:init_control_map()
 
-  self.grid = Grid:new(100, 100)
+  self.grid = Grid:new(50, 30)
+  self.grid_canvas = g.newCanvas(self.grid.width * 25, self.grid.height * 25)
+  g.setCanvas(self.grid_canvas)
+  for x, y, _ in self.grid:each() do
+    g.rectangle("line", (x - 1) * 25, (y - 1) * 25, 25, 25)
+  end
+  g.setCanvas()
 end
 
 function Main:update(dt)
@@ -16,6 +22,9 @@ end
 
 function Main:render()
   self.camera:set()
+  g.setColor(COLORS.white:rgb())
+
+  g.draw(self.grid_canvas, 0, 0)
 
   g.circle("fill", 100, 100, 20)
 

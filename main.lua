@@ -46,6 +46,10 @@ end
 function love.draw()
   game:render()
   loveframes.draw()
+
+  -- show fps
+  g.setColor(COLORS.green:rgb())
+  g.print("FPS: " .. love.timer.getFPS(), 0, 0)
 end
 
 function love.focus(has_focus)

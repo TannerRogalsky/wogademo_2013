@@ -28,9 +28,11 @@ cron = require 'lib/cron'
 COLORS = require 'lib/colors'
 tween = require 'lib/tween'
 beholder = require 'lib/beholder'
+Grid = require 'lib/grid'
 
 require 'base'
 require 'game'
+
 
 local function require_all(directory)
   local lfs = love.filesystem
