@@ -17,6 +17,10 @@ end
 function MapTile:render()
 end
 
+function MapTile:has_contents()
+  return next(self.content) ~= nil
+end
+
 function MapTile:cost_to_move_to()
   local cost = 0
   for _,content in pairs(self.content) do

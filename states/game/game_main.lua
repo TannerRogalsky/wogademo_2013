@@ -30,9 +30,11 @@ function Main:init_control_map()
   self.control_map = {
     mouse = {
       pressed = {
+        l = self.left_mouse_down,
         r = self.right_mouse_down
       },
       released = {
+        l = self.left_mouse_up,
         r = self.right_mouse_up
       },
       update = {
@@ -51,8 +53,17 @@ function Main:init_control_map()
   }
 end
 
+function Main:left_mouse_down(x, y)
+  local grid_x, grid_y = self.map:world_to_grid_coords(self.camera:mousePosition(x, y))
+  print(self.map.grid:g(grid_x, grid_y):has_contents())
+end
+
 function Main:right_mouse_down(x, y)
   self.right_mouse_down_pos = {x = x, y = y}
+end
+
+function Main:left_mouse_up(x, y)
+
 end
 
 function Main:right_mouse_up(x, y)
