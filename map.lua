@@ -14,6 +14,7 @@ function Map:initialize(x, y, width, height, tile_width, tile_height)
   self.entity_list = {}
 
   self.grid = Grid:new(self.width, self.height)
+  self.each = function(self, ...) return self.grid:each(...) end
   for x,y,_ in self.grid:each() do
     self.grid[x][y] = MapTile:new(self, x, y)
   end
