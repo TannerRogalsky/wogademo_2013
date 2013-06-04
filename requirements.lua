@@ -19,7 +19,7 @@ function is_string(s) return type(s) == "string" end
 -- Put any game-wide requirements in here
 require 'lib/middleclass'
 Stateful = require 'lib/stateful'
-skiplist = require "lib/skiplist"
+Skiplist = require "lib/skiplist"
 HC = require 'lib/HardonCollider'
 inspect = require 'lib/inspect'
 require 'lib/AnAL'
@@ -29,10 +29,14 @@ COLORS = require 'lib/colors'
 tween = require 'lib/tween'
 beholder = require 'lib/beholder'
 Grid = require 'lib/grid'
+AStar = require 'lib/astar'
 
 require 'base'
 require 'game'
-
+require 'direction'
+require 'map'
+require 'map_tile'
+require 'map_entity'
 
 local function require_all(directory)
   local lfs = love.filesystem
