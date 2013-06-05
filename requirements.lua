@@ -40,6 +40,7 @@ require 'direction'
 require 'map'
 require 'map_tile'
 require 'map_entity'
+require 'wall'
 
 local function require_all(directory)
   local lfs = love.filesystem
