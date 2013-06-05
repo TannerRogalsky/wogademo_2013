@@ -8,6 +8,11 @@ local Movable = {
       self:remove_from_grid()
       self.x, self.y = new_x, new_y
       self:insert_into_grid()
+      if self.physics_body then
+        local world_dx = delta_x * self.parent.tile_width
+        local world_dy = delta_y * self.parent.tile_height
+        self.physics_body:move(world_dx, world_dy)
+      end
     end
   end,
 
