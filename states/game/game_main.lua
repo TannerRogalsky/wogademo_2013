@@ -1,10 +1,12 @@
 local Main = Game:addState('Main')
 
 function Main:enteredState()
-  Collider = HC(100, self.on_start_collide, self.on_stop_collide)
+  local tile_size = 25
+
+  Collider = HC(tile_size, self.on_start_collide, self.on_stop_collide)
   self:init_control_map()
 
-  self.map = Map:new(0, 0, 50, 30, 25, 25)
+  self.map = Map:new(0, 0, 50, 30, tile_size, tile_size)
   self.entity = MapEntity:new(self.map, 1, 1)
   self.map:add_entity(self.entity)
   self.entity.render = function(this) g.rectangle("fill", (this.x - 1) * self.map.tile_width, (this.y - 1) * self.map.tile_height, this.width * self.map.tile_width, this.height * self.map.tile_height) end
@@ -23,6 +25,15 @@ function Main:render()
 
   self.map:render()
 
+  g.setColor(COLORS.blue:rgb())
+  if self.selection_box then
+    g.rectangle("line", unpack(self.selection_box))
+  end
+
+  for k,v in pairs(Collider:shapesInRange(-100, -100, 700, 700)) do
+    v:draw("line")
+  end
+
   self.camera:unset()
 end
 
@@ -40,6 +51,7 @@ function Main:init_control_map()
         r = self.right_mouse_up
       },
       update = {
+        l = self.left_mouse_update,
         r = self.right_mouse_update
       }
     },
@@ -56,8 +68,10 @@ function Main:init_control_map()
 end
 
 function Main:left_mouse_down(x, y)
-  local grid_x, grid_y = self.map:world_to_grid_coords(self.camera:mousePosition(x, y))
-  print(self.map.grid:g(grid_x, grid_y):has_contents())
+  -- local grid_x, grid_y = self.map:world_to_grid_coords(self.camera:mousePosition(x, y))
+  -- print(self.map.grid:g(grid_x, grid_y):has_contents())
+  local camera_x, camera_y = self.camera:mousePosition(x, y)
+  self.left_mouse_down_pos = {x = camera_x, y = camera_y}
 end
 
 function Main:right_mouse_down(x, y)
@@ -65,7 +79,15 @@ function Main:right_mouse_down(x, y)
 end
 
 function Main:left_mouse_up(x, y)
-
+  if self.selection_box then
+    local x, y, w, h = unpack(self.selection_box)
+    local shapes = Collider:shapesInRange(x, y, x + w, y + h)
+    for k,v in pairs(shapes) do
+      print(v.parent)
+    end
+  end
+  self.left_mouse_down_pos = nil
+  self.selection_box = nil
 end
 
 function Main:right_mouse_up(x, y)
@@ -78,6 +100,15 @@ end
 
 function Main:mouse_wheel_down(x, y)
   self.camera:setScale(1.25, 1.25)
+end
+
+
+function Main:left_mouse_update(x, y)
+  if self.left_mouse_down_pos then
+    local camera_x, camera_y = self.camera:mousePosition(x, y)
+    local down = self.left_mouse_down_pos
+    self.selection_box = {down.x, down.y, camera_x - down.x, camera_y - down.y}
+  end
 end
 
 function Main:right_mouse_update(x, y)

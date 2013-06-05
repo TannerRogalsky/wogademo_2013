@@ -14,6 +14,9 @@ function MapEntity:initialize(parent, x, y, width, height, z)
   self.x, self.y = x, y
   self.width, self.height = width or 1, height or 1
   self.z = z or 1
+
+  self.physics_body = Collider:addRectangle(self:world_bounds())
+  self.physics_body.parent = self
 end
 
 function MapEntity:update(dt)
@@ -32,6 +35,12 @@ function MapEntity:remove_from_grid()
   for _, _, tile in self.parent:each(self.x, self.y, self.width, self.height) do
     tile.content[self.id] = nil
   end
+end
+
+function MapEntity:world_bounds()
+  local world_x, world_y = self.parent:grid_to_world_coords(self.x, self.y)
+  local pixel_width, pixel_height = self.parent.tile_width * self.width - 1, self.parent.tile_height * self.height - 1
+  return world_x, world_y, pixel_width, pixel_height
 end
 
 function MapEntity:__lt(other)
