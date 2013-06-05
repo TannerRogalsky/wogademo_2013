@@ -12,6 +12,7 @@ function MapEntity:initialize(parent, x, y, width, height, z)
 
   self.parent = parent
   self.x, self.y = x, y
+  self.world_x, self.world_y = self.parent:grid_to_world_coords(self.x, self.y)
   self.width, self.height = width or 1, height or 1
   self.z = z or 1
 
@@ -38,9 +39,8 @@ function MapEntity:remove_from_grid()
 end
 
 function MapEntity:world_bounds()
-  local world_x, world_y = self.parent:grid_to_world_coords(self.x, self.y)
   local pixel_width, pixel_height = self.parent.tile_width * self.width - 1, self.parent.tile_height * self.height - 1
-  return world_x, world_y, pixel_width, pixel_height
+  return self.world_x, self.world_y, pixel_width, pixel_height
 end
 
 function MapEntity:__lt(other)
