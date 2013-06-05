@@ -41,6 +41,7 @@ require 'map'
 require 'map_tile'
 require 'map_entity'
 require 'wall'
+require 'tower_room'
 
 local function require_all(directory)
   local lfs = love.filesystem

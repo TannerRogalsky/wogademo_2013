@@ -68,6 +68,7 @@ function Map:add_entity(entity)
   entity:insert_into_grid()
   self.entity_list[entity.id] = entity
   self.render_queue:insert(entity)
+  if is_func(entity.add_to_map) then entity:add_to_map(self) end
 end
 
 function Map:remove_entity(entity)
@@ -75,6 +76,7 @@ function Map:remove_entity(entity)
   entity:remove_from_grid()
   self.entity_list[entity.id] = nil
   self.render_queue:delete(entity)
+  if is_func(entity.remove_from_map) then entity:remove_from_map(self) end
 end
 
 function Map:find_path(x1, y1, x2, y2)
