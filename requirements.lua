@@ -32,6 +32,7 @@ Grid = require 'lib/grid'
 AStar = require 'lib/astar'
 
 Movable = require 'mixins/movable'
+FollowsPath = require 'mixins/follows_path'
 
 require 'base'
 require 'game'

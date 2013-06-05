@@ -1,5 +1,6 @@
 MapEntity = class('MapEntity', Base):include(Stateful)
 MapEntity:include(Movable)
+MapEntity:include(FollowsPath)
 
 function MapEntity:initialize(parent, x, y, width, height, z)
   Base.initialize(self)

@@ -77,6 +77,11 @@ function Map:remove_entity(entity)
   self.render_queue:delete(entity)
 end
 
+function Map:find_path(x1, y1, x2, y2)
+  local start_tile, end_tile = self.grid:g(x1, y1), self.grid:g(x2, y2)
+  return self.grid_astar:find_path(start_tile, end_tile)
+end
+
 function Map:grid_to_world_coords(x, y)
   return (x - 1) * self.tile_width + self.x, (y - 1) * self.tile_height + self.y
 end

@@ -9,6 +9,10 @@ local Movable = {
       self.x, self.y = new_x, new_y
       self:insert_into_grid()
     end
+  end,
+
+  move_to = function(self, x, y)
+    self:move(x - self.x, y - self.y)
   end
 }
 
