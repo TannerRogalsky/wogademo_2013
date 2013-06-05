@@ -43,6 +43,10 @@ function MapEntity:world_bounds()
   return self.world_x, self.world_y, pixel_width, pixel_height
 end
 
+function MapEntity:world_center()
+  return self.world_x + self.width * self.parent.tile_width / 2, self.world_y + self.height * self.parent.tile_height / 2
+end
+
 function MapEntity:__lt(other)
   if self.z < other.z then return true
   elseif self.z == other.z and self.id < other.id then return true

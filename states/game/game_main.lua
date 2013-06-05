@@ -10,12 +10,21 @@ function Main:enteredState()
   self.entity = MapEntity:new(self.map, 1, 1, 2, 2)
   self.map:add_entity(self.entity)
   self.entity.render = function(this) g.rectangle("fill", this.world_x, this.world_y, this.width * self.map.tile_width, this.height * self.map.tile_height) end
+
+  local gun = Gun:new(self.map, 10, 13, 1, 1)
+  self.map:add_entity(gun)
+  gun:shoot_at(self.entity)
+  cron.after(5, function() gun:clear_target() end)
 end
 
 function Main:update(dt)
   local mouse_x, mouse_y = love.mouse.getPosition()
   for key, action in pairs(self.control_map.mouse.update) do
     if love.mouse.isDown(key) then action(self, mouse_x, mouse_y) end
+  end
+
+  for id,bullet in pairs(Bullet.instances) do
+    bullet:update(dt)
   end
 end
 
@@ -30,6 +39,11 @@ function Main:render()
     g.rectangle("line", unpack(self.selection_box))
   end
 
+  for id,bullet in pairs(Bullet.instances) do
+    bullet:render()
+  end
+
+  g.setColor(COLORS.blue:rgb())
   for k,v in pairs(Collider:shapesInRange(-100, -100, 700, 700)) do
     v:draw("line")
   end

@@ -5,6 +5,7 @@ function Gun:initialize(parent, x, y, w, h)
 
   self.target = nil
   self.firing_speed = 0.3
+  self.radius = self.width / 2
 end
 
 function Gun:update(dt)
@@ -13,13 +14,18 @@ end
 function Gun:shoot_at(target)
   assert(instanceOf(MapEntity, target))
   assert(self.firing_cron_id == nil)
+  self.target = target
   self.firing_cron_id = cron.every(self.firing_speed, self.fire, self)
 end
 
 -- should only really be used by cron
 function Gun:fire()
   assert(self.target ~= nil)
-
+  local target_center_x, target_center_y = self.target:world_center()
+  local center_x, center_y = self:world_center()
+  local vx, vy = component_vectors(center_x, center_y, target_center_x, target_center_y)
+  local speed = 200
+  local bullet = Bullet:new(center_x, center_y, speed * vx, speed * vy)
 end
 
 function Gun:clear_target()

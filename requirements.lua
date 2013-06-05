@@ -15,6 +15,10 @@ function generateID() globalID = globalID + 1 return globalID end
 function is_func(f) return type(f) == "function" end
 function is_num(n) return type(n) == "number" end
 function is_string(s) return type(s) == "string" end
+function component_vectors(x1, y1, x2, y2)
+  local angle = math.atan2(y2 - y1, x2 - x1)
+  return math.cos(angle), math.sin(angle)
+end
 
 -- Put any game-wide requirements in here
 require 'lib/middleclass'
@@ -43,6 +47,7 @@ require 'map_entity'
 require 'wall'
 require 'tower_room'
 require 'gun'
+require 'bullet'
 
 local function require_all(directory)
   local lfs = love.filesystem
