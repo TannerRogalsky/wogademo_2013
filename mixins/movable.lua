@@ -18,8 +18,8 @@ local Movable = {
     if new_x >= 0 and new_x + bw < self.parent.width * self.parent.tile_width and
        new_y >= 0 and new_y + bh < self.parent.height * self.parent.tile_height then
 
-      -- the grid coordinate should be the center
-      local new_grid_x, new_grid_y = self.parent:world_to_grid_coords(new_x + bw / 2, new_y + bh / 2)
+      -- new grid coords are got from new pixel coords + half of a tile
+      local new_grid_x, new_grid_y = self.parent:world_to_grid_coords(new_x + self.parent.tile_width / 2, new_y + self.parent.tile_height / 2)
       self:remove_from_grid()
       self.x, self.y = new_grid_x, new_grid_y
       self.world_x, self.world_y = new_x, new_y
