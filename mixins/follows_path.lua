@@ -1,5 +1,4 @@
--- this works but there are going to be issue with cancelling a follow and then starting one right away
--- not sure how to solve that yet
+-- this works but there might be issues with cancelling a path and then starting another one right away
 
 local FollowsPath = {
   follow_path = function(self, path, speed)
@@ -29,14 +28,22 @@ local FollowsPath = {
         cron.cancel(self.follow_path_cron_id)
         self.physics_body:moveTo(self:world_center())
         self.follow_path_cron_id = nil
+
+        -- maybe this is a good solution to cancelling the path and then starting one right away?
+        -- too tired to tell if it really scales
+        if is_func(self.follow_path_interrupt_callback) then
+          self:follow_path_interrupt_callback()
+        end
+        self.follow_path_interrupt_callback = nil
       end
     end
 
     tween_to_index(1)
   end,
 
-  cancel_follow_path = function(self)
+  cancel_follow_path = function(self, callback)
     self.follow_path_interrupt = true
+    self.follow_path_interrupt_callback = callback
   end
 }
 
