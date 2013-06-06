@@ -2,7 +2,7 @@
 
 local FollowsPath = {
   follow_path = function(self, path, speed)
-    assert(type(path) == "table" and #path >= 1, "Path is wrong or too short")
+    assert(type(path) == "table" and #path >= 2, "Path is wrong or too short")
     assert(self.follow_path_tween_id == nil, tostring(self) .. " is already following a path")
     speed = speed or 0.3
     self.follow_path_interrupt = false
@@ -38,7 +38,8 @@ local FollowsPath = {
       end
     end
 
-    tween_to_index(1)
+    -- the first path index is the starting node
+    tween_to_index(2)
   end,
 
   cancel_follow_path = function(self, callback)
