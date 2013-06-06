@@ -10,6 +10,8 @@ function Bullet:initialize(x, y, vel_x, vel_y, target)
   self.target = target
 
   self.physics_body = Collider:addPoint(self.x, self.y)
+  self.physics_body.parent = self
+  Collider:addToGroup("guns_and_bullets", self.physics_body)
 
   Bullet.instances[self.id] = self
 

@@ -57,7 +57,7 @@ function Map:update(dt)
 end
 
 function Map:render()
-  g.draw(self.grid_canvas, 0, 0)
+  g.draw(self.grid_canvas, self.x, self.y)
   for index,entity in self.render_queue:ipairs() do
     entity:render()
   end

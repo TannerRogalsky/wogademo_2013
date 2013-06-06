@@ -11,13 +11,20 @@ function Main:enteredState()
   self.map:add_entity(self.entity)
   self.entity.render = function(this) g.rectangle("fill", this.world_x, this.world_y, this.width * self.map.tile_width, this.height * self.map.tile_height) end
 
-  local path = self.map:find_path(self.entity.x, self.entity.y, 1, 25)
-  self.entity:follow_path(path, 1)
+  local path = self.map:find_path(self.entity.x, self.entity.y, 17, 25)
+  self.entity:follow_path(path, 0.3)
+
+  local function clear(gun) gun:clear_target() end
 
   local gun = Gun:new(self.map, 10, 13, 1, 1)
   self.map:add_entity(gun)
   gun:shoot_at(self.entity)
-  cron.after(5, function() gun:clear_target() end)
+  cron.after(5, clear, gun)
+
+  gun = Gun:new(self.map, 15, 24, 2, 2)
+  self.map:add_entity(gun)
+  gun:shoot_at(self.entity)
+  cron.after(7, clear, gun)
 end
 
 function Main:update(dt)
@@ -25,6 +32,8 @@ function Main:update(dt)
   for key, action in pairs(self.control_map.mouse.update) do
     if love.mouse.isDown(key) then action(self, mouse_x, mouse_y) end
   end
+
+  Collider:update(dt)
 
   for id,bullet in pairs(Bullet.instances) do
     bullet:update(dt)
@@ -171,6 +180,7 @@ end
 -- Note that if one of the shapes is a point shape, the translation vector will be invalid.
 function Main.on_start_collide(dt, shape_one, shape_two, mtv_x, mtv_y)
   local object_one, object_two = shape_one.parent, shape_two.parent
+  print(object_one, object_two)
 
   if object_one and is_func(object_one.on_collide) then
     object_one:on_collide(dt, shape_one, shape_two, mtv_x, mtv_y)

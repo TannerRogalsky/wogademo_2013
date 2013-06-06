@@ -6,6 +6,8 @@ function Gun:initialize(parent, x, y, w, h)
   self.target = nil
   self.firing_speed = 0.3
   self.radius = self.width / 2
+
+  Collider:addToGroup("guns_and_bullets", self.physics_body)
 end
 
 function Gun:update(dt)
@@ -35,7 +37,7 @@ function Gun:clear_target()
 end
 
 function Gun:render()
-  g.setColor(COLORS.red:rgb())
+  g.setColor(COLORS.yellow:rgb())
   g.rectangle("fill", (self.x - 1) * self.parent.tile_width, (self.y - 1) * self.parent.tile_height, self.width * self.parent.tile_width, self.height * self.parent.tile_height)
 end
 
