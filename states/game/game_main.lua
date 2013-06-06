@@ -7,9 +7,12 @@ function Main:enteredState()
   self:init_control_map()
 
   self.map = Map:new(0, 0, 50, 30, tile_size, tile_size)
-  self.entity = MapEntity:new(self.map, 1, 1, 2, 2)
+  self.entity = MapEntity:new(self.map, 1, 1, 1, 1)
   self.map:add_entity(self.entity)
   self.entity.render = function(this) g.rectangle("fill", this.world_x, this.world_y, this.width * self.map.tile_width, this.height * self.map.tile_height) end
+
+  local path = self.map:find_path(self.entity.x, self.entity.y, 1, 25)
+  self.entity:follow_path(path, 1)
 
   local gun = Gun:new(self.map, 10, 13, 1, 1)
   self.map:add_entity(gun)
@@ -74,7 +77,8 @@ function Main:init_control_map()
         up = function(self) self.entity:move(Direction.NORTH:unpack()) end,
         down = function(self) self.entity:move(Direction.SOUTH:unpack()) end,
         left = function(self) self.entity:move(Direction.WEST:unpack()) end,
-        right = function(self) self.entity:move(Direction.EAST:unpack()) end
+        right = function(self) self.entity:move(Direction.EAST:unpack()) end,
+        [" "] = function(self) self.entity:cancel_follow_path() end
       },
       released = {}
     }
