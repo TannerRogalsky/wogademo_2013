@@ -103,14 +103,25 @@ end
 
 function Main:right_mouse_down(x, y)
   self.right_mouse_down_pos = {x = x, y = y}
+
+  if self.selected_entities then
+    local grid_x, grid_y = self.map:world_to_grid_coords(x, y)
+    for id,entity in pairs(self.selected_entities) do
+      local path = self.map:find_path(entity.x, entity.y, grid_x, grid_y)
+      entity:follow_path(path)
+    end
+    -- self.selected_entities = nil
+  end
 end
 
 function Main:left_mouse_up(x, y)
   if self.selection_box then
     local x, y, w, h = unpack(self.selection_box)
     local shapes = Collider:shapesInRange(x, y, x + w, y + h)
-    for k,v in pairs(shapes) do
-      print(v.parent)
+    self.selected_entities = {}
+    for _,shape in pairs(shapes) do
+      local entity = shape.parent
+      self.selected_entities[entity.id] = entity
     end
   end
   self.left_mouse_down_pos = nil
