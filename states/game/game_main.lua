@@ -36,7 +36,7 @@ function Main:enteredState()
   gun:shoot_at(self.entity)
   cron.after(7, clear, gun)
 
-  local tower = TowerRoom:new(self.map, 15, 15, 6, 6)
+  local tower = TowerRoom:new(self.map, 15, 15, 5, 5)
   self.map:add_entity(tower)
 end
 

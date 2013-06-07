@@ -6,11 +6,16 @@ function TowerRoom:initialize(parent, x, y, width, height)
   Collider:addToGroup("friendly", self.physics_body)
 
   self.walls = {}
-  for _, _, tile in self.parent:each(x, y, width, height) do
-    if tile.x == x or tile.y == y or tile.x == x + width - 1 or tile.y == y + height - 1 then
-      local wall = Wall:new(self.parent, tile.x, tile.y)
-      self.walls[wall.id] = wall
-      Collider:addToGroup("friendly", wall.physics_body)
+  for _, _, tile in self.parent:each(self.x, self.y, self.width, self.height) do
+    -- check if you're in the outside row
+    if tile.x == self.x or tile.y == self.y or tile.x == self.x + self.width - 1 or tile.y == self.y + self.height - 1 then
+      -- check if you're not midway down one of the outside rows
+      if not (tile.x == self.x + math.floor(self.width / 2) or tile.y == self.y + math.floor(self.height / 2)) then
+        -- put walls around the tower
+        local wall = Wall:new(self.parent, tile.x, tile.y)
+        self.walls[wall.id] = wall
+        Collider:addToGroup("friendly", wall.physics_body)
+      end
     end
   end
 
