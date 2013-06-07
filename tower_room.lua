@@ -6,6 +6,7 @@ function TowerRoom:initialize(parent, x, y, width, height)
   Collider:addToGroup("friendly", self.physics_body)
 
   self.walls = {}
+  self.max_crew = 0
   for _, _, tile in self.parent:each(self.x, self.y, self.width, self.height) do
     -- check if you're in the outside row
     if tile.x == self.x or tile.y == self.y or tile.x == self.x + self.width - 1 or tile.y == self.y + self.height - 1 then
@@ -16,6 +17,8 @@ function TowerRoom:initialize(parent, x, y, width, height)
         self.walls[wall.id] = wall
         Collider:addToGroup("friendly", wall.physics_body)
       end
+    else
+      self.max_crew = self.max_crew + 1
     end
   end
 
@@ -42,6 +45,7 @@ function TowerRoom:remove_from_map(map)
 end
 
 function TowerRoom:render()
+  g.setColor(COLORS.green:rgb())
   for id,wall in pairs(self.walls) do
     wall:render()
   end

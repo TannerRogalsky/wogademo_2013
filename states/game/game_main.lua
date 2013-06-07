@@ -127,6 +127,7 @@ function Main:right_mouse_down(x, y)
     local index = 1
     for id,entity in pairs(self.selected_entities) do
       local target = room.crew_positions[index]
+      room.occupied_crew_positions[target.id] = target
       local path = self.map:find_path(entity.x, entity.y, target.x, target.y)
       entity:follow_path(path)
 
