@@ -17,6 +17,21 @@ end
 function MapTile:render()
 end
 
+function MapTile:get_contents_of_type(entity_type)
+  local content = {}
+  for id,entity in pairs(self.content) do
+    if instanceOf(entity_type, entity) then
+      table.insert(content, entity)
+    end
+  end
+  return content
+end
+
+function MapTile:get_first_content_of_type(entity_type)
+  assert(instanceOf(MapTile, self), "You forgot a colon, good buddy.")
+  return self:get_contents_of_type(entity_type)[1]
+end
+
 function MapTile:has_contents()
   return next(self.content) ~= nil
 end
