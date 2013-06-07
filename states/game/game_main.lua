@@ -158,11 +158,11 @@ function Main:right_mouse_up(x, y)
 end
 
 function Main:mouse_wheel_up(x, y)
-  self.camera:setScale(1, 1)
+  self.camera:scale(0.9, 0.9)
 end
 
 function Main:mouse_wheel_down(x, y)
-  self.camera:setScale(1.25, 1.25)
+  self.camera:scale(1.1, 1.1)
 end
 
 
