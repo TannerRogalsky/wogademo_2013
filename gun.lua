@@ -7,7 +7,7 @@ function Gun:initialize(parent, x, y, w, h)
   self.firing_speed = 0.3
   self.radius = self.width / 2
 
-  Collider:addToGroup("guns_and_bullets", self.physics_body)
+  Collider:addToGroup("friendly", self.physics_body)
 end
 
 function Gun:update(dt)

@@ -3,13 +3,22 @@ TowerRoom = class('TowerRoom', MapEntity)
 function TowerRoom:initialize(parent, x, y, width, height)
   MapEntity.initialize(self, parent, x, y, width, height)
 
+  Collider:addToGroup("friendly", self.physics_body)
+
   self.walls = {}
   for _, _, tile in self.parent:each(x, y, width, height) do
     if tile.x == x or tile.y == y or tile.x == x + width - 1 or tile.y == y + height - 1 then
       local wall = Wall:new(self.parent, tile.x, tile.y)
       self.walls[wall.id] = wall
+      Collider:addToGroup("friendly", wall.physics_body)
     end
   end
+
+  self.crew_positions = {}
+  for _, _, tile in self.parent:each(x + 1, y + 1, width - 2, height - 2) do
+    table.insert(self.crew_positions, tile)
+  end
+  self.occupied_crew_positions = {}
 end
 
 function TowerRoom:update(dt)

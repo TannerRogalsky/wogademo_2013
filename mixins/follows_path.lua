@@ -1,7 +1,7 @@
 -- this works but there might be issues with cancelling a path and then starting another one right away
 
 local FollowsPath = {
-  follow_path = function(self, path, speed)
+  follow_path = function(self, path, speed, callback)
     assert(type(path) == "table" and #path >= 2, "Path is wrong or too short")
     assert(self.follow_path_tween_id == nil, tostring(self) .. " is already following a path")
     speed = speed or 0.3
@@ -28,6 +28,10 @@ local FollowsPath = {
         cron.cancel(self.follow_path_cron_id)
         self.physics_body:moveTo(self:world_center())
         self.follow_path_cron_id = nil
+
+        if is_func(callback) then
+          callback(self)
+        end
 
         -- maybe this is a good solution to cancelling the path and then starting one right away?
         -- too tired to tell if it really scales

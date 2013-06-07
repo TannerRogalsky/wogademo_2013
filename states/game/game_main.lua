@@ -7,12 +7,22 @@ function Main:enteredState()
   self:init_control_map()
 
   self.map = Map:new(0, 0, 50, 30, tile_size, tile_size)
+
+  -- this is all just debug stuff from here on down
   self.entity = MapEntity:new(self.map, 1, 1, 1, 1)
   self.map:add_entity(self.entity)
   self.entity.render = function(this) g.rectangle("fill", this.world_x, this.world_y, this.width * self.map.tile_width, this.height * self.map.tile_height) end
 
-  local path = self.map:find_path(self.entity.x, self.entity.y, 17, 25)
-  self.entity:follow_path(path, 0.3)
+  local entity = MapEntity:new(self.map, 3, 2, 1, 1)
+  self.map:add_entity(entity)
+  entity.render = function(this) g.rectangle("fill", this.world_x, this.world_y, this.width * self.map.tile_width, this.height * self.map.tile_height) end
+
+  entity = MapEntity:new(self.map, 3, 5, 1, 1)
+  self.map:add_entity(entity)
+  entity.render = function(this) g.rectangle("fill", this.world_x, this.world_y, this.width * self.map.tile_width, this.height * self.map.tile_height) end
+
+  -- local path = self.map:find_path(self.entity.x, self.entity.y, 17, 25)
+  -- self.entity:follow_path(path, 0.3)
 
   local function clear(gun) gun:clear_target() end
 
@@ -25,6 +35,9 @@ function Main:enteredState()
   self.map:add_entity(gun)
   gun:shoot_at(self.entity)
   cron.after(7, clear, gun)
+
+  local tower = TowerRoom:new(self.map, 15, 15, 6, 6)
+  self.map:add_entity(tower)
 end
 
 function Main:update(dt)
@@ -103,14 +116,28 @@ end
 
 function Main:right_mouse_down(x, y)
   self.right_mouse_down_pos = {x = x, y = y}
+  local grid_x, grid_y = self.map:world_to_grid_coords(self.camera:mousePosition(x, y))
 
-  if self.selected_entities then
-    local grid_x, grid_y = self.map:world_to_grid_coords(x, y)
-    for id,entity in pairs(self.selected_entities) do
-      local path = self.map:find_path(entity.x, entity.y, grid_x, grid_y)
-      entity:follow_path(path)
+  -- move selected entities to a given room if it's been clicked, otherwise deselect them
+  local room = nil
+  for _,entity in pairs(self.map.grid:g(grid_x, grid_y).content) do
+    if instanceOf(TowerRoom, entity) then
+      room = entity
+      break
     end
-    -- self.selected_entities = nil
+  end
+
+  if self.selected_entities and room then
+    local index = 1
+    for id,entity in pairs(self.selected_entities) do
+      local target = room.crew_positions[index]
+      local path = self.map:find_path(entity.x, entity.y, target.x, target.y)
+      entity:follow_path(path)
+
+      index = index + 1
+    end
+  else
+    self.selected_entities = nil
   end
 end
 
@@ -121,7 +148,9 @@ function Main:left_mouse_up(x, y)
     self.selected_entities = {}
     for _,shape in pairs(shapes) do
       local entity = shape.parent
-      self.selected_entities[entity.id] = entity
+      if is_func(entity.follow_path) then
+        self.selected_entities[entity.id] = entity
+      end
     end
   end
   self.left_mouse_down_pos = nil
