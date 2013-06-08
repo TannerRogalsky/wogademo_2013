@@ -130,14 +130,37 @@ function Main:right_mouse_down(x, y)
 
   -- move selected entities to a given room if it's been clicked, otherwise deselect them
   if self.selected_entities and room then
-    local index = 1
-    for id,entity in pairs(self.selected_entities) do
-      local target = room.crew_positions[index]
-      room.occupied_crew_positions[target.id] = target
-      local path = self.map:find_path(entity.x, entity.y, target.x, target.y)
-      entity:follow_path(path)
 
-      index = index + 1
+    local index = 1
+    -- we may have multiple entities selected at once
+    for id,entity in pairs(self.selected_entities) do
+
+      -- don't try to put more crew than there are spaces for in a room
+      while index <= room.max_crew do
+        local target = room.crew_positions[index]
+
+        -- there's nothing in that position, let's move to it!
+        if room.occupied_crew_positions[target] == nil then
+          room.occupied_crew_positions[target] = entity
+
+          -- clear out the tile we're currently on
+          local current_tile = self.map.grid:g(entity.x, entity.y)
+          local current_room = current_tile:get_first_content_of_type(TowerRoom)
+          if current_room then
+            current_room.occupied_crew_positions[current_tile] = nil
+          end
+
+          -- go!
+          local path = self.map:find_path(entity.x, entity.y, target.x, target.y)
+          entity:follow_path(path)
+
+          -- we're moving so we stop looking for a spot
+          index = index + 1
+          break
+        end
+
+        index = index + 1
+      end
     end
   else
     self.selected_entities = nil
