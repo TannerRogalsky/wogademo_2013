@@ -3,9 +3,10 @@
 local FollowsPath = {
   follow_path = function(self, path, speed, callback)
     assert(type(path) == "table" and #path >= 2, "Path is wrong or too short")
-    assert(self.follow_path_tween_id == nil, tostring(self) .. " is already following a path")
+    assert(self.follow_path_target == nil, tostring(self) .. " is already following a path")
     speed = speed or 0.3
     self.follow_path_interrupt = false
+    self.follow_path_target = path[#path]
 
     local function tween_to_index(index)
       local new_tile = path[index]
@@ -28,6 +29,7 @@ local FollowsPath = {
         cron.cancel(self.follow_path_cron_id)
         self.physics_body:moveTo(self:world_center())
         self.follow_path_cron_id = nil
+        self.follow_path_target = nil
 
         if is_func(callback) then
           callback(self)

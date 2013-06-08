@@ -140,13 +140,6 @@ function Main:right_mouse_down(x, y)
         if room.occupied_crew_positions[target] == nil then
           room.occupied_crew_positions[target] = entity
 
-          -- clear out the tile we're currently on
-          local current_tile = self.map.grid:g(entity.x, entity.y)
-          local current_room = current_tile:get_first_content_of_type(TowerRoom)
-          if current_room then
-            current_room.occupied_crew_positions[current_tile] = nil
-          end
-
           -- set up an entity to show where we're headed
           local target_indicator = MapEntity:new(self.map, target.x, target.y)
           self.map:add_entity(target_indicator)
@@ -156,9 +149,34 @@ function Main:right_mouse_down(x, y)
             g.circle("fill", x, y, 5)
           end
 
-          -- find and follow a path to the target
+          -- find the path
           local path = self.map:find_path(entity.x, entity.y, target.x, target.y)
-          entity:follow_path(path, nil, function() self.map:remove_entity(target_indicator) end)
+
+          local is_pathing = entity.follow_path_target ~= nil
+
+          -- clear out the tile we're on or the one we were headed to
+          local occupied_tile = nil
+          if is_pathing then
+            occupied_tile = entity.follow_path_target
+          else
+            occupied_tile = self.map.grid:g(entity.x, entity.y)
+          end
+
+          -- actually clear the tile
+          local current_room = occupied_tile:get_first_content_of_type(TowerRoom)
+          if current_room then
+            current_room.occupied_crew_positions[occupied_tile] = nil
+          end
+
+          -- clear the path we're on right now if we are then follow the new path
+          local function follow_path_wrapper()
+            entity:follow_path(path, nil, function() self.map:remove_entity(target_indicator) end)
+          end
+          if is_pathing then
+            entity:cancel_follow_path(follow_path_wrapper)
+          else
+            follow_path_wrapper()
+          end
 
           -- we're moving so we stop looking for a spot
           index = index + 1
