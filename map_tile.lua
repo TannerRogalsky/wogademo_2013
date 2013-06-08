@@ -36,11 +36,11 @@ function MapTile:has_contents()
   return next(self.content) ~= nil
 end
 
-function MapTile:cost_to_move_to()
+function MapTile:cost_to_move_to(from)
   local cost = 0
   for _,content in pairs(self.content) do
     if is_func(content.cost_to_move_to) then
-      cost = cost + content:cost_to_move_to()
+      cost = cost + content:cost_to_move_to(from)
     elseif is_num(content.cost_to_move_to) then
       cost = cost + content.cost_to_move_to
     end

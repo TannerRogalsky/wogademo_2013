@@ -35,7 +35,7 @@ function Map:initialize(x, y, width, height, tile_width, tile_height)
   end
 
   local function cost(from, to)
-    return to:cost_to_move_to()
+    return to:cost_to_move_to(from)
   end
 
   local function distance(from, goal)
