@@ -38,6 +38,12 @@ function Main:enteredState()
 
   local tower = TowerRoom:new(self.map, 15, 15, 5, 5)
   self.map:add_entity(tower)
+  tower = TowerRoom:new(self.map, 20, 15, 5, 5)
+  self.map:add_entity(tower)
+  tower = TowerRoom:new(self.map, 20, 10, 5, 5)
+  self.map:add_entity(tower)
+  tower = TowerRoom:new(self.map, 15, 10, 5, 5)
+  self.map:add_entity(tower)
 end
 
 function Main:update(dt)
