@@ -150,9 +150,18 @@ function Main:right_mouse_down(x, y)
             current_room.occupied_crew_positions[current_tile] = nil
           end
 
-          -- go!
+          -- set up an entity to show where we're headed
+          local target_indicator = MapEntity:new(self.map, target.x, target.y)
+          self.map:add_entity(target_indicator)
+          target_indicator.render = function(self)
+            local x, y = self:world_center()
+            g.setColor(COLORS.deepskyblue:rgb())
+            g.circle("fill", x, y, 5)
+          end
+
+          -- find and follow a path to the target
           local path = self.map:find_path(entity.x, entity.y, target.x, target.y)
-          entity:follow_path(path)
+          entity:follow_path(path, nil, function() self.map:remove_entity(target_indicator) end)
 
           -- we're moving so we stop looking for a spot
           index = index + 1
