@@ -1,6 +1,4 @@
 MapEntity = class('MapEntity', Base):include(Stateful)
-MapEntity:include(Movable)
-MapEntity:include(FollowsPath)
 
 function MapEntity:initialize(parent, x, y, width, height, z)
   Base.initialize(self)
@@ -15,9 +13,6 @@ function MapEntity:initialize(parent, x, y, width, height, z)
   self.world_x, self.world_y = self.parent:grid_to_world_coords(self.x, self.y)
   self.width, self.height = width or 1, height or 1
   self.z = z or 1
-
-  self.physics_body = Collider:addRectangle(self:world_bounds())
-  self.physics_body.parent = self
 end
 
 function MapEntity:update(dt)

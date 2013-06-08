@@ -9,15 +9,15 @@ function Main:enteredState()
   self.map = Map:new(0, 0, 50, 30, tile_size, tile_size)
 
   -- this is all just debug stuff from here on down
-  self.entity = MapEntity:new(self.map, 1, 1, 1, 1)
+  self.entity = Crew:new(self.map, 1, 1, 1, 1)
   self.map:add_entity(self.entity)
   self.entity.render = function(this) g.rectangle("fill", this.world_x, this.world_y, this.width * self.map.tile_width, this.height * self.map.tile_height) end
 
-  local entity = MapEntity:new(self.map, 3, 2, 1, 1)
+  local entity = Crew:new(self.map, 3, 2, 1, 1)
   self.map:add_entity(entity)
   entity.render = function(this) g.rectangle("fill", this.world_x, this.world_y, this.width * self.map.tile_width, this.height * self.map.tile_height) end
 
-  entity = MapEntity:new(self.map, 3, 5, 1, 1)
+  entity = Crew:new(self.map, 3, 5, 1, 1)
   self.map:add_entity(entity)
   entity.render = function(this) g.rectangle("fill", this.world_x, this.world_y, this.width * self.map.tile_width, this.height * self.map.tile_height) end
 

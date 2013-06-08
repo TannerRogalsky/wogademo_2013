@@ -3,8 +3,6 @@ TowerRoom = class('TowerRoom', MapEntity)
 function TowerRoom:initialize(parent, x, y, width, height)
   MapEntity.initialize(self, parent, x, y, width, height)
 
-  Collider:addToGroup("friendly", self.physics_body)
-
   self.walls = {}
   self.max_crew = 0
   for _, _, tile in self.parent:each(self.x, self.y, self.width, self.height) do
@@ -15,7 +13,6 @@ function TowerRoom:initialize(parent, x, y, width, height)
         -- put walls around the tower
         local wall = Wall:new(self.parent, tile.x, tile.y)
         self.walls[wall.id] = wall
-        Collider:addToGroup("friendly", wall.physics_body)
       end
     else
       self.max_crew = self.max_crew + 1
