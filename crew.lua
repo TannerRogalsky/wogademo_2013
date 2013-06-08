@@ -14,7 +14,7 @@ function Crew:update(dt)
 end
 
 function Crew:render()
-  g.rectangle("fill", (self.x - 1) * self.parent.tile_width, (self.y - 1) * self.parent.tile_height, self.width * self.parent.tile_width, self.height * self.parent.tile_height)
+  g.rectangle("fill", self.world_x, self.world_y, self.width * self.parent.tile_width, self.height * self.parent.tile_height)
 end
 
 Crew.__lt = MapEntity.__lt

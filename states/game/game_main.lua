@@ -9,17 +9,14 @@ function Main:enteredState()
   self.map = Map:new(0, 0, 50, 30, tile_size, tile_size)
 
   -- this is all just debug stuff from here on down
-  self.entity = Crew:new(self.map, 1, 1, 1, 1)
+  self.entity = Crew:new(self.map, 1, 1)
   self.map:add_entity(self.entity)
-  self.entity.render = function(this) g.rectangle("fill", this.world_x, this.world_y, this.width * self.map.tile_width, this.height * self.map.tile_height) end
 
-  local entity = Crew:new(self.map, 3, 2, 1, 1)
+  local entity = Crew:new(self.map, 3, 2)
   self.map:add_entity(entity)
-  entity.render = function(this) g.rectangle("fill", this.world_x, this.world_y, this.width * self.map.tile_width, this.height * self.map.tile_height) end
 
-  entity = Crew:new(self.map, 3, 5, 1, 1)
+  entity = Crew:new(self.map, 3, 5)
   self.map:add_entity(entity)
-  entity.render = function(this) g.rectangle("fill", this.world_x, this.world_y, this.width * self.map.tile_width, this.height * self.map.tile_height) end
 
   -- local path = self.map:find_path(self.entity.x, self.entity.y, 17, 25)
   -- self.entity:follow_path(path, 0.3)
