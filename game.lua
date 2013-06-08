@@ -5,6 +5,16 @@ function Game:initialize()
 
   local Camera = require 'lib/camera'
   self.camera = Camera:new()
+  self.camera.bounds = {
+    negative_x = -100,
+    negative_y = -100,
+    positive_x = 100,
+    positive_y = 100,
+    negative_sx = 0.5,
+    negative_sy = 0.5,
+    positive_sx = 1.5,
+    positive_sy = 1.5
+  }
 
   self.font = g.newFont(16)
   g.setFont(self.font)

@@ -120,10 +120,12 @@ end
 function Main:right_mouse_down(x, y)
   self.right_mouse_down_pos = {x = x, y = y}
   local grid_x, grid_y = self.map:world_to_grid_coords(self.camera:mousePosition(x, y))
-  local tile = self.map.grid:g(grid_x, grid_y)
+  local tile, room = self.map.grid:g(grid_x, grid_y), nil
 
   -- did you click on a room?
-  local room = tile:get_first_content_of_type(TowerRoom)
+  if tile then
+    room = tile:get_first_content_of_type(TowerRoom)
+  end
 
   -- move selected entities to a given room if it's been clicked, otherwise deselect them
   if self.selected_entities and room then
