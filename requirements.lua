@@ -49,6 +49,7 @@ require 'tower_room'
 require 'gun'
 require 'bullet'
 require 'crew'
+require 'lod'
 
 local function require_all(directory)
   local lfs = love.filesystem

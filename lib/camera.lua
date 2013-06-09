@@ -36,6 +36,8 @@ function Camera:move(dx, dy)
   self.y = self.y + (dy or 0)
   self.x = math.clamp(self.bounds.negative_x, self.x, self.bounds.positive_x)
   self.y = math.clamp(self.bounds.negative_y, self.y, self.bounds.positive_y)
+
+  LOD.on_graphics_translate(self.x, self.y, dx, dy)
 end
 
 function Camera:rotate(dr)
@@ -48,6 +50,8 @@ function Camera:scale(sx, sy)
   self.scaleY = self.scaleY * (sy or sx)
   self.scaleX = math.clamp(self.bounds.negative_sx, self.scaleX, self.bounds.positive_sx)
   self.scaleY = math.clamp(self.bounds.negative_sy, self.scaleY, self.bounds.positive_sy)
+
+  LOD.on_graphics_scale(self.scaleX, self.scaleY, sx, sy)
 end
 
 function Camera:setPosition(x, y)
@@ -55,6 +59,8 @@ function Camera:setPosition(x, y)
   self.y = y or self.y
   self.x = math.clamp(self.bounds.negative_x, self.x, self.bounds.positive_x)
   self.y = math.clamp(self.bounds.negative_y, self.y, self.bounds.positive_y)
+
+  LOD.on_graphics_translate(self.x, self.y, dx, dy)
 end
 
 function Camera:setScale(sx, sy)
@@ -62,6 +68,8 @@ function Camera:setScale(sx, sy)
   self.scaleY = sy or self.scaleY
   self.scaleX = math.clamp(self.bounds.negative_sx, self.scaleX, self.bounds.positive_sx)
   self.scaleY = math.clamp(self.bounds.negative_sy, self.scaleY, self.bounds.positive_sy)
+
+  LOD.on_graphics_scale(self.scaleX, self.scaleY, sx, sy)
 end
 
 function Camera:mousePosition(x, y)

@@ -24,6 +24,11 @@ function TowerRoom:initialize(parent, x, y, width, height)
     table.insert(self.crew_positions, tile)
   end
   self.occupied_crew_positions = {}
+
+  self.z = 1
+  self.render = self.base_mode_render
+
+  LOD.delegates[self.id] = self
 end
 
 function TowerRoom:update(dt)
@@ -41,11 +46,36 @@ function TowerRoom:remove_from_map(map)
   end
 end
 
-function TowerRoom:render()
+function TowerRoom:base_mode_render()
+  g.setColor(COLORS.coral:rgb())
+  g.rectangle("fill", self.world_x, self.world_y, self.width * self.parent.tile_width, self.height * self.parent.tile_height)
+
   g.setColor(COLORS.green:rgb())
   for id,wall in pairs(self.walls) do
     wall:render()
   end
+end
+
+function TowerRoom:gun_mode_render()
+  g.setColor(COLORS.coral:rgb())
+  g.rectangle("fill", self.world_x, self.world_y, self.width * self.parent.tile_width, self.height * self.parent.tile_height)
+end
+
+function TowerRoom:on_graphics_scale(x, y, dx, dy)
+  if x < 1 then
+    self.parent.render_queue:delete(self)
+    self.z = 1
+    self.render = self.base_mode_render
+    self.parent.render_queue:insert(self)
+  else
+    self.parent.render_queue:delete(self)
+    self.z = 10
+    self.render = self.gun_mode_render
+    self.parent.render_queue:insert(self)
+  end
+end
+
+function TowerRoom:on_graphics_translate()
 end
 
 TowerRoom.__lt = MapEntity.__lt
