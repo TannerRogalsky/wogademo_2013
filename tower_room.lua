@@ -8,11 +8,13 @@ function TowerRoom:initialize(parent, x, y, width, height)
   for _, _, tile in self.parent:each(self.x, self.y, self.width, self.height) do
     -- check if you're in the outside row
     if tile.x == self.x or tile.y == self.y or tile.x == self.x + self.width - 1 or tile.y == self.y + self.height - 1 then
+      -- put walls around the tower
+      local wall = Wall:new(self.parent, tile.x, tile.y)
+      self.walls[wall.id] = wall
+      wall.cost = 1
       -- check if you're not midway down one of the outside rows
       if not (tile.x == self.x + math.floor(self.width / 2) or tile.y == self.y + math.floor(self.height / 2)) then
-        -- put walls around the tower
-        local wall = Wall:new(self.parent, tile.x, tile.y)
-        self.walls[wall.id] = wall
+        wall.cost = 100
       end
     else
       self.max_crew = self.max_crew + 1

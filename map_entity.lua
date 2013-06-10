@@ -15,12 +15,6 @@ function MapEntity:initialize(parent, x, y, width, height, z)
   self.z = z or 1
 end
 
-function MapEntity:update(dt)
-end
-
-function MapEntity:render()
-end
-
 function MapEntity:insert_into_grid()
   for _, _, tile in self.parent:each(self.x, self.y, self.width, self.height) do
     tile.content[self.id] = self

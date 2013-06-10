@@ -3,10 +3,20 @@ Wall = class('Wall', MapEntity)
 function Wall:initialize(parent, x, y)
   MapEntity.initialize(self, parent, x, y, 1, 1)
 
-  self.cost_to_move_to = 100
+  self.cost = 100
 end
 
 function Wall:update(dt)
+end
+
+function Wall:cost_to_move_to(from)
+  local room = from:get_first_content_of_type(TowerRoom)
+
+  if room then
+    return 1
+  else
+    return self.cost
+  end
 end
 
 function Wall:render()
