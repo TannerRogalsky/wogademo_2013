@@ -18,9 +18,6 @@ function Main:enteredState()
   entity = Crew:new(self.map, 3, 5)
   self.map:add_entity(entity)
 
-  -- local path = self.map:find_path(self.entity.x, self.entity.y, 17, 25)
-  -- self.entity:follow_path(path, 0.3)
-
   local function clear(gun) gun:clear_target() end
 
   local gun = Gun:new(self.map, 10, 13, 1, 1)
@@ -38,11 +35,13 @@ function Main:enteredState()
     for j=1,3 do
       local tower = TowerRoom:new(self.map, 15 + 3 * (i - 1), 12 + 3 * (j - 1), 3, 3)
       self.towers[tower.id] = tower
+      self.map:add_entity(tower)
     end
   end
   for id,tower in pairs(self.towers) do
-    self.map:add_entity(tower)
+    tower:set_traversal_costs()
   end
+
 end
 
 function Main:update(dt)
@@ -114,11 +113,7 @@ end
 
 function Main:left_mouse_down(x, y)
   -- local grid_x, grid_y = self.map:world_to_grid_coords(self.camera:mousePosition(x, y))
-  -- print(self.map.grid:g(grid_x, grid_y):has_contents())
   -- local tile = self.map.grid:g(grid_x, grid_y)
-  -- for k,v in pairs(tile.siblings) do
-  --   print(v.x, v.y, v:cost_to_move_to(tile))
-  -- end
   local camera_x, camera_y = self.camera:mousePosition(x, y)
   self.left_mouse_down_pos = {x = camera_x, y = camera_y}
 end
