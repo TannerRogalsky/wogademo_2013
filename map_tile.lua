@@ -9,6 +9,7 @@ function MapTile:initialize(parent, x, y)
   self.color = COLORS.green
   self.content = {}
   self.siblings = {}
+  self.traversal_cost = {}
 end
 
 function MapTile:update(dt)
@@ -37,7 +38,7 @@ function MapTile:has_contents()
 end
 
 function MapTile:cost_to_move_to(from)
-  local cost = 0
+  local cost = self.traversal_cost[from] or 1
   for _,content in pairs(self.content) do
     if is_func(content.cost_to_move_to) then
       cost = cost + content:cost_to_move_to(from)

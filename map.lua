@@ -25,6 +25,7 @@ function Map:initialize(x, y, width, height, tile_width, tile_height)
 
       if direction then
         tile.siblings[direction] = neighbor
+        tile.traversal_cost[neighbor] = 1
       end
     end
   end
@@ -49,6 +50,8 @@ function Map:initialize(x, y, width, height, tile_width, tile_height)
   g.setColor(COLORS.white:rgb())
   for x, y, _ in self.grid:each() do
     g.rectangle("line", (x - 1) * self.tile_width, (y - 1) * self.tile_width, self.tile_height, self.tile_height)
+    -- g.print(x, (x - 1) * self.tile_width, (y - 1) * self.tile_height)
+    -- g.print(y, (x - 1) * self.tile_width, (y - 1) * self.tile_height + self.tile_height / 2)
   end
   g.setCanvas()
 end

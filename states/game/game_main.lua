@@ -33,14 +33,16 @@ function Main:enteredState()
   gun:shoot_at(self.entity)
   cron.after(7, clear, gun)
 
-  local tower = TowerRoom:new(self.map, 15, 15, 5, 5)
-  self.map:add_entity(tower)
-  tower = TowerRoom:new(self.map, 20, 15, 5, 5)
-  self.map:add_entity(tower)
-  tower = TowerRoom:new(self.map, 20, 10, 5, 5)
-  self.map:add_entity(tower)
-  tower = TowerRoom:new(self.map, 15, 10, 5, 5)
-  self.map:add_entity(tower)
+  self.towers = {}
+  for i=1,3 do
+    for j=1,3 do
+      local tower = TowerRoom:new(self.map, 15 + 3 * (i - 1), 12 + 3 * (j - 1), 3, 3)
+      self.towers[tower.id] = tower
+    end
+  end
+  for id,tower in pairs(self.towers) do
+    self.map:add_entity(tower)
+  end
 end
 
 function Main:update(dt)
@@ -113,6 +115,10 @@ end
 function Main:left_mouse_down(x, y)
   -- local grid_x, grid_y = self.map:world_to_grid_coords(self.camera:mousePosition(x, y))
   -- print(self.map.grid:g(grid_x, grid_y):has_contents())
+  -- local tile = self.map.grid:g(grid_x, grid_y)
+  -- for k,v in pairs(tile.siblings) do
+  --   print(v.x, v.y, v:cost_to_move_to(tile))
+  -- end
   local camera_x, camera_y = self.camera:mousePosition(x, y)
   self.left_mouse_down_pos = {x = camera_x, y = camera_y}
 end

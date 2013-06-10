@@ -3,28 +3,41 @@ TowerRoom = class('TowerRoom', MapEntity)
 function TowerRoom:initialize(parent, x, y, width, height)
   MapEntity.initialize(self, parent, x, y, width, height)
 
-  self.walls = {}
+  self.walls, self.gates = {}, {}
   self.max_crew = 0
+  self.crew_positions = {}
+
   for _, _, tile in self.parent:each(self.x, self.y, self.width, self.height) do
     -- check if you're in the outside row
     if tile.x == self.x or tile.y == self.y or tile.x == self.x + self.width - 1 or tile.y == self.y + self.height - 1 then
+
       -- put walls around the tower
-      local wall = Wall:new(self.parent, tile.x, tile.y)
-      self.walls[wall.id] = wall
-      wall.cost = 1
       -- check if you're not midway down one of the outside rows
       if not (tile.x == self.x + math.floor(self.width / 2) or tile.y == self.y + math.floor(self.height / 2)) then
-        wall.cost = 100
+        local wall = Wall:new(self.parent, tile.x, tile.y)
+        self.walls[wall.id] = wall
+        table.insert(self.crew_positions, tile)
+        self.max_crew = self.max_crew + 1
+
+        -- set traversal costs for both directions because it makes it easier and cheaper for astar calculations
+        for direction,sibling in pairs(tile.siblings) do
+          local room = sibling:get_first_content_of_type(TowerRoom)
+
+          if room ~= self then
+            sibling.traversal_cost[tile] = 100
+            tile.traversal_cost[sibling] = 100
+          end
+        end
+      else
+        local gate = Gate:new(self.parent, tile.x, tile.y)
+        self.gates[gate.id] = gate
       end
     else
+      table.insert(self.crew_positions, tile)
       self.max_crew = self.max_crew + 1
     end
   end
 
-  self.crew_positions = {}
-  for _, _, tile in self.parent:each(x + 1, y + 1, width - 2, height - 2) do
-    table.insert(self.crew_positions, tile)
-  end
   self.occupied_crew_positions = {}
 
   self.z = 1
@@ -40,11 +53,17 @@ function TowerRoom:add_to_map(map)
   for id,wall in pairs(self.walls) do
     wall:insert_into_grid()
   end
+  for id,gate in pairs(self.gates) do
+    gate:insert_into_grid()
+  end
 end
 
 function TowerRoom:remove_from_map(map)
   for id,wall in pairs(self.walls) do
     wall:remove_from_grid()
+  end
+  for id,gate in pairs(self.gates) do
+    gate:remove_from_grid()
   end
 end
 
