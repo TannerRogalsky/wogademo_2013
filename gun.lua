@@ -12,6 +12,8 @@ function Gun:initialize(parent, x, y, w, h)
 
   self.render = self.base_mode_render
 
+  self.image = game.preloaded_image["gun.png"]
+
   LOD.delegates[self.id] = self
 end
 
@@ -57,6 +59,10 @@ function Gun:gun_mode_render()
   local point_on_circle_x = x + self.radius * math.cos(self.angle + math.pi)
   local point_on_circle_y = y + self.radius * math.sin(self.angle + math.pi)
   love.graphics.line(x, y, point_on_circle_x, point_on_circle_y)
+
+  -- draws from the center
+  g.setColor(COLORS.white:rgb())
+  g.draw(self.image, x, y, self.angle - math.pi / 2, 1, 1, self.width * self.parent.tile_width / 2, self.height * self.parent.tile_height / 2)
 end
 
 function Gun:on_graphics_scale(x, y, dx, dy)
