@@ -145,6 +145,7 @@ function Main:right_mouse_down(x, y)
 
           -- set up an entity to show where we're headed
           local target_indicator = MapEntity:new(self.map, target.x, target.y)
+          target_indicator.z = entity.z
           self.map:add_entity(target_indicator)
           target_indicator.render = function(self)
             local x, y = self:world_center()
