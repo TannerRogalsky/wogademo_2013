@@ -35,7 +35,7 @@ function Main:enteredState()
     self.z = 1
     self.map:add_entity(gun)
     gun:shoot_at(self.entity)
-    cron.after(10, gun_clear, gun)
+    -- cron.after(10, gun_clear, gun)
   end
 
 end

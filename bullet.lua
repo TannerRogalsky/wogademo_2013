@@ -27,6 +27,7 @@ end
 
 function Bullet:destroy()
   Bullet.instances[self.id] = nil
+  Collider:remove(self.physics_body)
 end
 
 function Bullet:render()
