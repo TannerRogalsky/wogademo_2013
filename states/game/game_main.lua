@@ -9,10 +9,10 @@ function Main:enteredState()
   self.map = Map:new(0, 0, 50, 30, tile_size, tile_size)
 
   -- this is all just debug stuff from here on down
-  self.entity = Crew:new(self.map, 1, 1)
-  self.map:add_entity(self.entity)
+  local entity = Crew:new(self.map, 1, 1)
+  self.map:add_entity(entity)
 
-  local entity = Crew:new(self.map, 3, 2)
+  entity = Crew:new(self.map, 3, 2)
   self.map:add_entity(entity)
 
   entity = Crew:new(self.map, 3, 5)
@@ -20,24 +20,23 @@ function Main:enteredState()
 
   local function gun_clear(gun) gun:clear_target() end
 
-  self.towers = {}
+  self.rooms = {}
   for i=1,3 do
     for j=1,3 do
-      local tower = TowerRoom:new(self.map, 15 + 3 * (i - 1), 12 + 3 * (j - 1), 3, 3)
-      self.towers[tower.id] = tower
-      self.map:add_entity(tower)
+      local room = TowerRoom:new(self.map, 15 + 3 * (i - 1), 12 + 3 * (j - 1), 3, 3)
+      self.rooms[room.id] = room
+      self.map:add_entity(room)
     end
   end
-  for id,tower in pairs(self.towers) do
-    tower:set_traversal_costs()
-    local gun = Gun:new(self.map, tower.x, tower.y, tower.width, tower.height)
-    tower.emplacements[gun.id] = gun
+  for id,room in pairs(self.rooms) do
+    room:set_traversal_costs()
+    local gun = Gun:new(self.map, room.x, room.y, room.width, room.height)
+    room.emplacements[gun.id] = gun
     self.z = 1
     self.map:add_entity(gun)
-    gun:shoot_at(self.entity)
+    -- gun:shoot_at(self.entity)
     -- cron.after(10, gun_clear, gun)
   end
-
 end
 
 function Main:update(dt)
@@ -48,8 +47,8 @@ function Main:update(dt)
 
   Collider:update(dt)
 
-  for id,tower in pairs(self.towers) do
-    tower:update(dt)
+  for id,room in pairs(self.rooms) do
+    room:update(dt)
   end
 
   for id,bullet in pairs(Bullet.instances) do
