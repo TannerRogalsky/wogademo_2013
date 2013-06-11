@@ -6,6 +6,12 @@ function Gun:initialize(parent, x, y, w, h)
   self.target = nil
   self.firing_speed = 0.3
   self.radius = self.width / 2
+
+  self.z = 1
+
+  self.render = self.base_mode_render
+
+  LOD.delegates[self.id] = self
 end
 
 function Gun:update(dt)
@@ -34,9 +40,27 @@ function Gun:clear_target()
   self.firing_cron_id = nil
 end
 
-function Gun:render()
+function Gun:base_mode_render()
+end
+
+function Gun:gun_mode_render()
   g.setColor(COLORS.yellow:rgb())
-  g.rectangle("fill", (self.x - 1) * self.parent.tile_width, (self.y - 1) * self.parent.tile_height, self.width * self.parent.tile_width, self.height * self.parent.tile_height)
+  local x, y = self:world_center()
+  g.circle("fill", x, y, self.width * self.parent.tile_width / 2)
+end
+
+function Gun:on_graphics_scale(x, y, dx, dy)
+  if x < 1 then
+    self.parent.render_queue:delete(self)
+    self.z = 1
+    self.render = self.base_mode_render
+    self.parent.render_queue:insert(self)
+  else
+    self.parent.render_queue:delete(self)
+    self.z = 201
+    self.render = self.gun_mode_render
+    self.parent.render_queue:insert(self)
+  end
 end
 
 Gun.__lt = MapEntity.__lt

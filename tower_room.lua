@@ -29,8 +29,11 @@ function TowerRoom:initialize(parent, x, y, width, height)
 
   self.occupied_crew_positions = {}
 
-  self.z = 1
+  self.z = 100
   self.render = self.base_mode_render
+
+  self.image = game.preloaded_image["base.png"]
+  self.emplacements = {}
 
   LOD.delegates[self.id] = self
 end
@@ -81,7 +84,7 @@ function TowerRoom:remove_from_map(map)
 end
 
 function TowerRoom:base_mode_render()
-  g.setColor(COLORS.coral:rgb())
+  g.setColor(COLORS.grey:rgb())
   g.rectangle("fill", self.world_x, self.world_y, self.width * self.parent.tile_width, self.height * self.parent.tile_height)
 
   for id,wall in pairs(self.walls) do
@@ -93,19 +96,19 @@ function TowerRoom:base_mode_render()
 end
 
 function TowerRoom:gun_mode_render()
-  g.setColor(COLORS.coral:rgb())
-  g.rectangle("fill", self.world_x, self.world_y, self.width * self.parent.tile_width, self.height * self.parent.tile_height)
+  g.setColor(COLORS.white:rgb())
+  g.draw(self.image, self.world_x, self.world_y)
 end
 
 function TowerRoom:on_graphics_scale(x, y, dx, dy)
   if x < 1 then
     self.parent.render_queue:delete(self)
-    self.z = 1
+    self.z = 100
     self.render = self.base_mode_render
     self.parent.render_queue:insert(self)
   else
     self.parent.render_queue:delete(self)
-    self.z = 10
+    self.z = 200
     self.render = self.gun_mode_render
     self.parent.render_queue:insert(self)
   end

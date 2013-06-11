@@ -20,15 +20,15 @@ function Main:enteredState()
 
   local function clear(gun) gun:clear_target() end
 
-  local gun = Gun:new(self.map, 10, 13, 1, 1)
-  self.map:add_entity(gun)
-  gun:shoot_at(self.entity)
-  cron.after(5, clear, gun)
+  -- local gun = Gun:new(self.map, 10, 13, 1, 1)
+  -- self.map:add_entity(gun)
+  -- gun:shoot_at(self.entity)
+  -- cron.after(5, clear, gun)
 
-  gun = Gun:new(self.map, 15, 24, 2, 2)
-  self.map:add_entity(gun)
-  gun:shoot_at(self.entity)
-  cron.after(7, clear, gun)
+  -- gun = Gun:new(self.map, 15, 24, 2, 2)
+  -- self.map:add_entity(gun)
+  -- gun:shoot_at(self.entity)
+  -- cron.after(7, clear, gun)
 
   self.towers = {}
   for i=1,3 do
@@ -40,6 +40,10 @@ function Main:enteredState()
   end
   for id,tower in pairs(self.towers) do
     tower:set_traversal_costs()
+    local gun = Gun:new(self.map, tower.x, tower.y, tower.width, tower.height)
+    tower.emplacements[gun.id] = gun
+    self.z = 1
+    self.map:add_entity(gun)
   end
 
 end
