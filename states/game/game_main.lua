@@ -202,7 +202,7 @@ function Main:left_mouse_up(x, y)
     self.selected_entities = {}
     for _,shape in pairs(shapes) do
       local entity = shape.parent
-      if is_func(entity.follow_path) then
+      if instanceOf(Crew, entity) then
         self.selected_entities[entity.id] = entity
       end
     end
