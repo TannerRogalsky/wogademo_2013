@@ -4,8 +4,9 @@ function Gun:initialize(parent, x, y, w, h)
   MapEntity.initialize(self, parent, x, y, w, h)
 
   self.target = nil
+  self.angle = 0
   self.firing_speed = 0.3
-  self.radius = self.width / 2
+  self.radius = self.width * self.parent.tile_width / 2
 
   self.z = 1
 
@@ -15,6 +16,10 @@ function Gun:initialize(parent, x, y, w, h)
 end
 
 function Gun:update(dt)
+  if self.target then
+    local x, y = self:world_center()
+    self.angle = math.atan2(y - self.target.world_y, x - self.target.world_x)
+  end
 end
 
 function Gun:shoot_at(target)
@@ -46,7 +51,12 @@ end
 function Gun:gun_mode_render()
   g.setColor(COLORS.yellow:rgb())
   local x, y = self:world_center()
-  g.circle("fill", x, y, self.width * self.parent.tile_width / 2)
+  g.circle("fill", x, y, self.radius)
+
+  love.graphics.setColor(COLORS.black:rgb())
+  local point_on_circle_x = x + self.radius * math.cos(self.angle + math.pi)
+  local point_on_circle_y = y + self.radius * math.sin(self.angle + math.pi)
+  love.graphics.line(x, y, point_on_circle_x, point_on_circle_y)
 end
 
 function Gun:on_graphics_scale(x, y, dx, dy)
@@ -62,6 +72,8 @@ function Gun:on_graphics_scale(x, y, dx, dy)
     self.parent.render_queue:insert(self)
   end
 end
+
+function Gun:on_graphics_translate() end
 
 Gun.__lt = MapEntity.__lt
 Gun.__le = MapEntity.__le

@@ -39,6 +39,9 @@ function TowerRoom:initialize(parent, x, y, width, height)
 end
 
 function TowerRoom:update(dt)
+  for id,gun in pairs(self.emplacements) do
+    gun:update(dt)
+  end
 end
 
 function TowerRoom:set_traversal_costs()

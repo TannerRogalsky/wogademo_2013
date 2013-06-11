@@ -18,17 +18,7 @@ function Main:enteredState()
   entity = Crew:new(self.map, 3, 5)
   self.map:add_entity(entity)
 
-  local function clear(gun) gun:clear_target() end
-
-  -- local gun = Gun:new(self.map, 10, 13, 1, 1)
-  -- self.map:add_entity(gun)
-  -- gun:shoot_at(self.entity)
-  -- cron.after(5, clear, gun)
-
-  -- gun = Gun:new(self.map, 15, 24, 2, 2)
-  -- self.map:add_entity(gun)
-  -- gun:shoot_at(self.entity)
-  -- cron.after(7, clear, gun)
+  local function gun_clear(gun) gun:clear_target() end
 
   self.towers = {}
   for i=1,3 do
@@ -44,6 +34,8 @@ function Main:enteredState()
     tower.emplacements[gun.id] = gun
     self.z = 1
     self.map:add_entity(gun)
+    gun:shoot_at(self.entity)
+    cron.after(10, gun_clear, gun)
   end
 
 end
@@ -55,6 +47,10 @@ function Main:update(dt)
   end
 
   Collider:update(dt)
+
+  for id,tower in pairs(self.towers) do
+    tower:update(dt)
+  end
 
   for id,bullet in pairs(Bullet.instances) do
     bullet:update(dt)
