@@ -1,6 +1,7 @@
 Enemy = class('Enemy', MapEntity)
-MapEntity:include(Movable)
-MapEntity:include(FollowsPath)
+Enemy:include(Movable)
+Enemy:include(FollowsPath)
+Enemy.static.instances = {}
 
 function Enemy:initialize(parent, x, y)
   MapEntity.initialize(self, parent, x, y, 1, 1)
@@ -10,9 +11,16 @@ function Enemy:initialize(parent, x, y)
   self.physics_body = Collider:addRectangle(self:world_bounds())
   self.physics_body.parent = self
   Collider:addToGroup("enemies", self.physics_body)
+
+  Enemy.instances[self.id] = self
 end
 
 function Enemy:update(dt)
+end
+
+function Enemy:destroy()
+  Enemy.instances[self.id] = nil
+  Collider:remove(self.physics_body)
 end
 
 function Enemy:render()

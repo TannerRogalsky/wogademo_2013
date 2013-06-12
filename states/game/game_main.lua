@@ -9,15 +9,14 @@ function Main:enteredState()
   self.map = Map:new(0, 0, 50, 30, tile_size, tile_size)
 
   -- this is all just debug stuff from here on down
-  self.rooms = {}
   for i=1,3 do
     for j=1,3 do
       local room = TowerRoom:new(self.map, 15 + 3 * (i - 1), 12 + 3 * (j - 1), 3, 3)
-      self.rooms[room.id] = room
+      self.map.rooms[room.id] = room
       self.map:add_entity(room)
     end
   end
-  for id,room in pairs(self.rooms) do
+  for id,room in pairs(self.map.rooms) do
     room:set_traversal_costs()
     local gun = Gun:new(self.map, room.x, room.y, room.width, room.height)
     room.emplacements[gun.id] = gun
@@ -26,12 +25,17 @@ function Main:enteredState()
   end
 
   for i=1,3 do
-    local _,room = next(self.rooms)
+    local _,room = next(self.map.rooms)
     local target = room:get_first_unoccupied_position()
     local entity = Crew:new(self.map, target.x, target.y)
     room:set_position(entity, target)
     self.map:add_entity(entity)
   end
+
+  cron.every(1, function()
+    local x, y = 1, math.random(1, self.map.height)
+    local enemy = self.map:spawn_enemy(Enemy, x, y)
+  end)
 end
 
 function Main:update(dt)
@@ -42,7 +46,7 @@ function Main:update(dt)
 
   Collider:update(dt)
 
-  for id,room in pairs(self.rooms) do
+  for id,room in pairs(self.map.rooms) do
     room:update(dt)
   end
 

@@ -12,6 +12,7 @@ function Map:initialize(x, y, width, height, tile_width, tile_height)
 
   self.render_queue = Skiplist.new(self.width * self.height * Map.render_queue_depth)
   self.entity_list = {}
+  self.rooms = {}
 
   self.grid = Grid:new(self.width, self.height)
   self.each = function(self, ...) return self.grid:each(...) end
@@ -93,6 +94,27 @@ end
 
 function Map:world_to_grid_coords(x, y)
   return math.floor(x / self.tile_width + self.x + 1), math.floor(y / self.tile_height - self.y + 1)
+end
+
+function Map:spawn_enemy(type, x, y)
+  assert(type, Enemy)
+  local enemy = type:new(self, x, y)
+  self:add_entity(enemy)
+  return enemy
+end
+
+function Map:get_closest_room(x, y)
+  local _,closest = next(self.rooms)
+  local distances = {closest = math.huge}
+  for id,room in pairs(self.rooms) do
+    local room_x, room_y = room:grid_center()
+    local manhattan_distance = math.abs(room_x - x) + math.abs(room_y - y)
+    distances[room] = manhattan_distance
+    if manhattan_distance < distances[closest] then
+      closest = room
+    end
+  end
+  return closest
 end
 
 function Map.keypressed_up(self)
