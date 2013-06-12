@@ -11,11 +11,9 @@ local FollowsPath = {
     local function tween_to_index(index)
       local new_tile = path[index]
       if new_tile and self.follow_path_interrupt == false then
-        if self.follow_path_cron_id == nil then
-          self.follow_path_cron_id = cron.every(0.1, function()
-            self.physics_body:moveTo(self:world_center())
-          end)
-        end
+        self.follow_path_cron_id = cron.doFor(speed, function()
+          self.physics_body:moveTo(self:world_center())
+        end)
         local new_x, new_y = self.parent:grid_to_world_coords(new_tile.x, new_tile.y)
 
         self:remove_from_grid()
