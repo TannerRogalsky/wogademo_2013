@@ -116,39 +116,3 @@ function Map:get_closest_room(x, y)
   end
   return closest
 end
-
-function Map.keypressed_up(self)
-end
-
-function Map.keypressed_right(self)
-end
-
-function Map.keypressed_down(self)
-end
-
-function Map.keypressed_left(self)
-end
-
-function Map:mousepressed(x, y, button)
-end
-
-function Map:mousereleased(x, y, button)
-end
-
-function Map:keypressed(key, unicode)
-end
-
-function Map:keyreleased(key, unicode)
-end
-
-function Map:joystickpressed(joystick, button)
-end
-
-function Map:joystickreleased(joystick, button)
-end
-
-function Map:focus(has_focus)
-end
-
-function Map:quit()
-end
