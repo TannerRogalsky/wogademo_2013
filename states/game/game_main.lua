@@ -32,9 +32,11 @@ function Main:enteredState()
     self.map:add_entity(entity)
   end
 
-  cron.every(1, function()
+  cron.after(1, function()
     local x, y = 1, math.random(1, self.map.height)
     local enemy = self.map:spawn_enemy(Enemy, x, y)
+    local target = self.map:get_closest_room(x, y)
+    enemy:gotoState("Moving", target)
   end)
 end
 
@@ -52,6 +54,10 @@ function Main:update(dt)
 
   for id,bullet in pairs(Bullet.instances) do
     bullet:update(dt)
+  end
+
+  for id,enemy in pairs(Enemy.instances) do
+    enemy:update(dt)
   end
 end
 

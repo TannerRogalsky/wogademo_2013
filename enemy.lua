@@ -16,6 +16,7 @@ function Enemy:initialize(parent, x, y)
 end
 
 function Enemy:update(dt)
+  print("boom")
 end
 
 function Enemy:destroy()
