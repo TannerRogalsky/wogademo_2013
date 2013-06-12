@@ -68,6 +68,24 @@ function TowerRoom:set_traversal_costs()
   end
 end
 
+function TowerRoom:get_first_unoccupied_position()
+  local index = 1
+  while index <= self.max_crew do
+    local target = self.crew_positions[index]
+    if self.occupied_crew_positions[target] == nil then
+      return target
+    end
+    index = index + 1
+  end
+  return nil
+end
+
+function TowerRoom:set_position(entity, target)
+  assert(instanceOf(MapEntity, entity))
+  assert(instanceOf(MapTile, target))
+  self.occupied_crew_positions[target] = entity
+end
+
 function TowerRoom:add_to_map(map)
   for id,wall in pairs(self.walls) do
     wall:insert_into_grid()

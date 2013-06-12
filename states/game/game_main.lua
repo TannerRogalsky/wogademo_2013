@@ -9,17 +9,6 @@ function Main:enteredState()
   self.map = Map:new(0, 0, 50, 30, tile_size, tile_size)
 
   -- this is all just debug stuff from here on down
-  local entity = Crew:new(self.map, 1, 1)
-  self.map:add_entity(entity)
-
-  entity = Crew:new(self.map, 3, 2)
-  self.map:add_entity(entity)
-
-  entity = Crew:new(self.map, 3, 5)
-  self.map:add_entity(entity)
-
-  local function gun_clear(gun) gun:clear_target() end
-
   self.rooms = {}
   for i=1,3 do
     for j=1,3 do
@@ -34,8 +23,14 @@ function Main:enteredState()
     room.emplacements[gun.id] = gun
     self.z = 1
     self.map:add_entity(gun)
-    -- gun:shoot_at(self.entity)
-    -- cron.after(10, gun_clear, gun)
+  end
+
+  for i=1,3 do
+    local _,room = next(self.rooms)
+    local target = room:get_first_unoccupied_position()
+    local entity = Crew:new(self.map, target.x, target.y)
+    room:set_position(entity, target)
+    self.map:add_entity(entity)
   end
 end
 
