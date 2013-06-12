@@ -34,3 +34,9 @@ function Bullet:render()
   g.setColor(COLORS.red:rgb())
   g.circle("fill", self.x, self.y, 5)
 end
+
+function Bullet:on_collide(dt, other, mtv_x, mtv_y)
+  if instanceOf(Enemy, other) then
+    self:destroy()
+  end
+end

@@ -75,10 +75,10 @@ function Main:render()
     bullet:render()
   end
 
-  -- g.setColor(COLORS.blue:rgb())
-  -- for k,v in pairs(Collider:shapesInRange(-100, -100, 700, 700)) do
-  --   v:draw("line")
-  -- end
+  g.setColor(COLORS.blue:rgb())
+  for k,v in pairs(Collider:shapesInRange(-100, -100, 700, 700)) do
+    v:draw("line")
+  end
 
   self.camera:unset()
 end
@@ -280,11 +280,11 @@ function Main.on_start_collide(dt, shape_one, shape_two, mtv_x, mtv_y)
   print(object_one, object_two)
 
   if object_one and is_func(object_one.on_collide) then
-    object_one:on_collide(dt, shape_one, shape_two, mtv_x, mtv_y)
+    object_one:on_collide(dt, object_two, mtv_x, mtv_y)
   end
 
   if object_two and is_func(object_two.on_collide) then
-    object_two:on_collide(dt, shape_one, shape_two, mtv_x, mtv_y)
+    object_two:on_collide(dt, object_one, mtv_x, mtv_y)
   end
 end
 

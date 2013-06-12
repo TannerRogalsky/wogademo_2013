@@ -16,6 +16,7 @@ end
 
 function MovingToAttackingTransition:exitedState()
   self.world_x, self.world_y = self.parent:grid_to_world_coords(self.x, self.y)
+  self.physics_body:moveTo(self:world_center())
 end
 
 return MovingToAttackingTransition

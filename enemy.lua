@@ -18,12 +18,20 @@ end
 
 function Enemy:destroy()
   Enemy.instances[self.id] = nil
+  self.parent:remove_entity(self)
   Collider:remove(self.physics_body)
+  beholder.trigger("enemied_destroyed", self)
 end
 
 function Enemy:render()
   g.setColor(COLORS.cyan:rgb())
   g.rectangle("fill", self.world_x, self.world_y, self.width * self.parent.tile_width, self.height * self.parent.tile_height)
+end
+
+function Enemy:on_collide(dt, other, mtv_x, mtv_y)
+  if instanceOf(Bullet, other) then
+    self:destroy()
+  end
 end
 
 Enemy.__lt = MapEntity.__lt

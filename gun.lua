@@ -14,6 +14,14 @@ function Gun:initialize(parent, x, y, w, h)
 
   self.image = game.preloaded_image["gun.png"]
 
+  beholder.observe("enemied_destroyed", function(enemy)
+    print("enemied_destroyed")
+    if enemy == self.target then
+      print("nilling")
+      self:clear_target()
+    end
+  end)
+
   LOD.delegates[self.id] = self
 end
 
@@ -21,6 +29,11 @@ function Gun:update(dt)
   if self.target then
     local x, y = self:world_center()
     self.angle = math.atan2(y - self.target.world_y, x - self.target.world_x)
+  else
+    local _, target = next(Enemy.instances)
+    if target then
+      self:shoot_at(target)
+    end
   end
 end
 
