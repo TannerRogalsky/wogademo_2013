@@ -7,16 +7,13 @@ function Enemy:initialize(parent, x, y)
   MapEntity.initialize(self, parent, x, y, 1, 1)
 
   self.z = 151
+  self.speed = 50
 
   self.physics_body = Collider:addRectangle(self:world_bounds())
   self.physics_body.parent = self
   Collider:addToGroup("enemies", self.physics_body)
 
   Enemy.instances[self.id] = self
-end
-
-function Enemy:update(dt)
-  print("boom")
 end
 
 function Enemy:destroy()
