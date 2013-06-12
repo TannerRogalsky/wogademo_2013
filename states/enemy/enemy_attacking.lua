@@ -5,7 +5,6 @@ function Attacking:enteredState()
 end
 
 function Attacking:exitedState()
-  print("exited Attacking")
 end
 
 return Attacking

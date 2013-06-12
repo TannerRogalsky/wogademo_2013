@@ -98,6 +98,18 @@ end
 
 function Map:spawn_enemy(type, x, y)
   assert(type, Enemy)
+
+  -- random spot on outside row
+  if x == nil or y == nil then
+    if math.random(2) == 2 then
+      x = math.random(self.width)
+      y = math.random(2) == 2 and 1 or self.height
+    else
+      x = math.random(2) == 2 and 1 or self.width
+      y = math.random(self.height)
+    end
+  end
+
   local enemy = type:new(self, x, y)
   self:add_entity(enemy)
   return enemy

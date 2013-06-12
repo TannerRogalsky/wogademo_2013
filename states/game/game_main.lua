@@ -33,9 +33,8 @@ function Main:enteredState()
   end
 
   cron.every(2, function()
-    local x, y = 1, math.random(self.map.height)
-    local enemy = self.map:spawn_enemy(Enemy, x, y)
-    local target = self.map:get_closest_room(x, y)
+    local enemy = self.map:spawn_enemy(Enemy)
+    local target = self.map:get_closest_room(enemy.x, enemy.y)
     enemy:gotoState("Moving", target)
   end)
 end
@@ -76,10 +75,10 @@ function Main:render()
     bullet:render()
   end
 
-  g.setColor(COLORS.blue:rgb())
-  for k,v in pairs(Collider:shapesInRange(-100, -100, 700, 700)) do
-    v:draw("line")
-  end
+  -- g.setColor(COLORS.blue:rgb())
+  -- for k,v in pairs(Collider:shapesInRange(-100, -100, 700, 700)) do
+  --   v:draw("line")
+  -- end
 
   self.camera:unset()
 end

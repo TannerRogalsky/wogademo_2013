@@ -11,22 +11,19 @@ function Moving:update(dt)
   self.angle = math.atan2(target_center_y - y, target_center_x - x)
   self:move_by_pixel(self.speed * dt * math.cos(self.angle), self.speed * dt * math.sin(self.angle))
 
-  local tile = self.parent.grid:g(self.x, self.y)
-  for index,direction in ipairs(Direction.list) do
-    local sibling = tile.siblings[direction]
-
+  for _, _, sibling in self.parent:each(self.x - 1, self.y - 1, 3, 3) do
     if sibling then
       local room = sibling:get_first_content_of_type(TowerRoom)
 
       if room then
         self:gotoState("MovingToAttackingTransition")
+        break
       end
     end
   end
 end
 
 function Moving:exitedState()
-  print("exited moving")
 end
 
 return Moving
