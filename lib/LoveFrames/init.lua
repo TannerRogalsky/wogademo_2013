@@ -3,7 +3,7 @@
 	-- Copyright (c) 2013 Kenny Shields --
 --]]------------------------------------------------
 
--- 
+--
 local path = ...
 
 -- central library table
@@ -38,51 +38,50 @@ loveframes.objects = {}
 	- desc: loads the library
 --]]---------------------------------------------------------
 function loveframes.load()
-	
+
 	-- install directory of the library
 	local dir = loveframes.config["DIRECTORY"] or path
-	
+
 	-- require the internal base libraries
-	require(dir .. ".third-party.middleclass")
 	require(dir .. ".util")
 	require(dir .. ".skins")
 	require(dir .. ".templates")
 	require(dir .. ".debug")
-	
+
 	-- replace all "." with "/" in the directory setting
 	dir = dir:gsub("%.", "/")
 	loveframes.config["DIRECTORY"] = dir
-	
+
 	-- create a list of gui objects, skins and templates
 	local objects = loveframes.util.GetDirectoryContents(dir .. "/objects")
 	local skins = loveframes.util.GetDirectoryContents(dir .. "/skins")
 	local templates = loveframes.util.GetDirectoryContents(dir .. "/templates")
-	
+
 	-- loop through a list of all gui objects and require them
 	for k, v in ipairs(objects) do
 		if v.extension == "lua" then
 			require(v.requirepath)
 		end
 	end
-	
+
 	-- loop through a list of all gui templates and require them
 	for k, v in ipairs(templates) do
 		if v.extension == "lua" then
 			require(v.requirepath)
 		end
 	end
-	
+
 	-- loop through a list of all gui skins and require them
 	for k, v in ipairs(skins) do
 		if v.extension == "lua" then
 			require(v.requirepath)
 		end
 	end
-	
+
 	-- create the base gui object
 	local base = loveframes.objects["base"]
 	loveframes.base = base:new()
-	
+
 end
 
 --[[---------------------------------------------------------
@@ -105,18 +104,18 @@ function loveframes.draw()
 	local base = loveframes.base
 	local r, g, b, a = love.graphics.getColor()
 	local font = love.graphics.getFont()
-	
+
 	base:draw()
-	
+
 	loveframes.drawcount = 0
 	loveframes.debug.draw()
-	
+
 	love.graphics.setColor(r, g, b, a)
-	
+
 	if font then
 		love.graphics.setFont(font)
 	end
-	
+
 end
 
 --[[---------------------------------------------------------
@@ -127,7 +126,7 @@ function loveframes.mousepressed(x, y, button)
 
 	local base = loveframes.base
 	base:mousepressed(x, y, button)
-	
+
 end
 
 --[[---------------------------------------------------------
@@ -138,13 +137,13 @@ function loveframes.mousereleased(x, y, button)
 
 	local base = loveframes.base
 	base:mousereleased(x, y, button)
-	
+
 	-- reset the hover object
 	if button == "l" then
 		loveframes.hoverobject = false
 		loveframes.selectedobject = false
 	end
-	
+
 end
 
 --[[---------------------------------------------------------
@@ -155,7 +154,7 @@ function loveframes.keypressed(key, unicode)
 
 	local base = loveframes.base
 	base:keypressed(key, unicode)
-	
+
 end
 
 --[[---------------------------------------------------------
@@ -166,7 +165,7 @@ function loveframes.keyreleased(key)
 
 	local base = loveframes.base
 	base:keyreleased(key)
-	
+
 end
 
 --[[---------------------------------------------------------
@@ -176,50 +175,50 @@ end
 			object or objects for further manipulation
 --]]---------------------------------------------------------
 function loveframes.Create(data, parent)
-	
+
 	if type(data) == "string" then
-	
+
 		local objects = loveframes.objects
 		local object = objects[data]
-		
+
 		if not object then
 			loveframes.util.Error("Error creating object: Invalid object '" ..data.. "'.")
 		end
-		
+
 		-- create the object
 		local newobject = object:new()
-		
+
 		-- apply template properties to the object
 		loveframes.templates.ApplyToObject(newobject)
-		
+
 		-- if the object is a tooltip, return it and go no further
 		if data == "tooltip" then
 			return newobject
 		end
-		
+
 		-- remove the object if it is an internal
 		if newobject.internal then
 			newobject:Remove()
 			return
 		end
-		
+
 		-- parent the new object by default to the base gui object
 		newobject.parent = loveframes.base
 		table.insert(loveframes.base.children, newobject)
-		
+
 		-- if the parent argument is not nil, make that argument the object's new parent
 		if parent then
 			newobject:SetParent(parent)
 		end
-		
+
 		-- return the object for further manipulation
 		return newobject
-		
+
 	elseif type(data) == "table" then
 
 		-- table for creation of multiple objects
 		local objects = {}
-		
+
 		-- this function reads a table that contains a layout of object properties and then
 		-- creates objects based on those properties
 		local function CreateObjects(t, o, c)
@@ -259,14 +258,14 @@ function loveframes.Create(data, parent)
 				end
 			end
 		end
-		
+
 		-- create the objects
 		CreateObjects(data)
-		
+
 		return objects
-		
+
 	end
-	
+
 end
 
 --[[---------------------------------------------------------
@@ -274,10 +273,10 @@ end
 	- desc: creates a new object
 --]]---------------------------------------------------------
 function loveframes.NewObject(id, name, inherit_from_base)
-	
+
 	local objects = loveframes.objects
 	local object = false
-	
+
 	if inherit_from_base then
 		local base = objects["base"]
 		object = class(name, base)
@@ -286,9 +285,9 @@ function loveframes.NewObject(id, name, inherit_from_base)
 		object = class(name)
 		objects[id] = object
 	end
-	
+
 	return object
-	
+
 end
 
 --[[---------------------------------------------------------
@@ -299,7 +298,7 @@ function loveframes.SetState(name)
 
 	loveframes.state = name
 	loveframes.base.state = name
-	
+
 end
 
 --[[---------------------------------------------------------
@@ -309,7 +308,7 @@ end
 function loveframes.GetState()
 
 	return loveframes.state
-	
+
 end
 
 -- load the library
