@@ -50,7 +50,7 @@ function Gun:update(dt)
       end
     end
 
-    if closest then
+    if closest and Gun.targets[closest.id] == nil then
       self:shoot_at(closest)
     end
   end

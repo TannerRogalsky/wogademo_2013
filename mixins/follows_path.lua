@@ -26,6 +26,11 @@ local FollowsPath = {
         -- clean up the cron and make sure to reset the physics body just in case
         cron.cancel(self.follow_path_cron_id)
         self.physics_body:moveTo(self:world_center())
+
+        if self.follow_path_target == self.parent.grid:g(self.x, self.y) then
+          beholder.trigger("crew_at_path_target", self)
+        end
+
         self.follow_path_cron_id = nil
         self.follow_path_target = nil
 

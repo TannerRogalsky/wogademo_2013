@@ -24,6 +24,6 @@ function Base:__tostring()
   return "Instance of ".. self.class.name .." with ID ".. self.id
 end
 
-function Base:__concat()
-  return tostring(self)
+function Base.__concat(value1, value2)
+  return tostring(value1) .. tostring(value2)
 end
