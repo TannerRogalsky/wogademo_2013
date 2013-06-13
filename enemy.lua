@@ -21,6 +21,10 @@ function Enemy:destroy()
   self.parent:remove_entity(self)
   Collider:remove(self.physics_body)
   beholder.trigger("enemied_destroyed", self)
+
+  if self.attacking_cron_id then
+    cron.cancel(self.attacking_cron_id)
+  end
 end
 
 function Enemy:render()
