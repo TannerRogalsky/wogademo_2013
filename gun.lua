@@ -26,19 +26,32 @@ function Gun:initialize(parent, x, y, w, h)
 end
 
 function Gun:update(dt)
+  local x, y = self:world_center()
+
   if self.target then
-    local x, y = self:world_center()
     local target_x, target_y = self.target:world_center()
     local desired_angle = math.atan2(y - target_y, x - target_x)
     local delta_angle = desired_angle - self.angle
     delta_angle = math.clamp(-self.rotation_speed, delta_angle, self.rotation_speed)
     self.angle = self.angle + delta_angle
   else
+    -- this seems to be a pretty common pattern. Maybe refactor?
+    local _,closest = next(Enemy.instances)
+    local distances = {closest = math.huge}
+
     for id,enemy in pairs(Enemy.instances) do
-      if Gun.targets[enemy.id] == nil then
-        self:shoot_at(enemy)
-        break
+
+      local enemy_x, enemy_y = enemy:world_center()
+      local distance = math.sqrt(math.pow(enemy_x - x, 2) + math.pow(enemy_y - y, 2))
+      distances[enemy] = distance
+
+      if Gun.targets[enemy.id] == nil and distance < distances[closest] then
+        closest = enemy
       end
+    end
+
+    if closest then
+      self:shoot_at(closest)
     end
   end
 end
