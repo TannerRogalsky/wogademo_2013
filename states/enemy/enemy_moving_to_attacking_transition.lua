@@ -7,7 +7,7 @@ function MovingToAttackingTransition:enteredState()
   self.angle = math.atan2(target_y - self.world_y, target_x - self.world_x)
   local distance = math.sqrt(math.pow(target_x - self.world_x, 2) + math.pow(target_y - self.world_y, 2))
 
-  cron.after(distance / self.speed, self.gotoState, self, "Attacking")
+  self.transition_cron_id = cron.after(distance / self.speed, self.gotoState, self, "Attacking")
 end
 
 function MovingToAttackingTransition:update(dt)

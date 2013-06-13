@@ -22,9 +22,8 @@ function Enemy:destroy()
   Collider:remove(self.physics_body)
   beholder.trigger("enemied_destroyed", self)
 
-  if self.attacking_cron_id then
-    cron.cancel(self.attacking_cron_id)
-  end
+  if self.attacking_cron_id then cron.cancel(self.attacking_cron_id) end
+  if self.transition_cron_id then cron.cancel(self.transition_cron_id) end
 end
 
 function Enemy:render()
