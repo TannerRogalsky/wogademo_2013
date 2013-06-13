@@ -32,7 +32,7 @@ function Main:enteredState()
     self.map:add_entity(entity)
   end
 
-  cron.every(2, function()
+  cron.every(0.3, function()
     local enemy = self.map:spawn_enemy(Enemy)
     local target = self.map:get_closest_room(enemy.x, enemy.y)
     enemy:gotoState("Moving", target)

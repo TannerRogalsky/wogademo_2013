@@ -1,4 +1,5 @@
 Gun = class('Gun', MapEntity)
+Gun.static.targets = {}
 
 function Gun:initialize(parent, x, y, w, h)
   MapEntity.initialize(self, parent, x, y, w, h)
@@ -33,9 +34,11 @@ function Gun:update(dt)
     delta_angle = math.clamp(-self.rotation_speed, delta_angle, self.rotation_speed)
     self.angle = self.angle + delta_angle
   else
-    local _, target = next(Enemy.instances)
-    if target then
-      self:shoot_at(target)
+    for id,enemy in pairs(Enemy.instances) do
+      if Gun.targets[enemy.id] == nil then
+        self:shoot_at(enemy)
+        break
+      end
     end
   end
 end
@@ -44,6 +47,7 @@ function Gun:shoot_at(target)
   assert(instanceOf(MapEntity, target))
   assert(self.firing_cron_id == nil)
   self.target = target
+  Gun.targets[self.target.id] = self.target
   self.firing_cron_id = cron.every(self.firing_speed, self.fire, self)
 end
 
@@ -57,6 +61,7 @@ function Gun:fire()
 end
 
 function Gun:clear_target()
+  Gun.targets[self.target.id] = nil
   self.target = nil
   cron.cancel(self.firing_cron_id)
   self.firing_cron_id = nil
