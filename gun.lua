@@ -6,6 +6,7 @@ function Gun:initialize(parent, x, y, w, h)
   self.target = nil
   self.angle = 0
   self.firing_speed = 0.3
+  self.rotation_speed = math.rad(1)
   self.radius = self.width * self.parent.tile_width / 2
 
   self.z = 1
@@ -15,9 +16,7 @@ function Gun:initialize(parent, x, y, w, h)
   self.image = game.preloaded_image["gun.png"]
 
   beholder.observe("enemied_destroyed", function(enemy)
-    print("enemied_destroyed")
     if enemy == self.target then
-      print("nilling")
       self:clear_target()
     end
   end)
@@ -28,7 +27,11 @@ end
 function Gun:update(dt)
   if self.target then
     local x, y = self:world_center()
-    self.angle = math.atan2(y - self.target.world_y, x - self.target.world_x)
+    local target_x, target_y = self.target:world_center()
+    local desired_angle = math.atan2(y - target_y, x - target_x)
+    local delta_angle = desired_angle - self.angle
+    delta_angle = math.clamp(-self.rotation_speed, delta_angle, self.rotation_speed)
+    self.angle = self.angle + delta_angle
   else
     local _, target = next(Enemy.instances)
     if target then
@@ -47,11 +50,10 @@ end
 -- should only really be used by cron
 function Gun:fire()
   assert(self.target ~= nil)
-  local target_center_x, target_center_y = self.target:world_center()
   local center_x, center_y = self:world_center()
-  local vx, vy = component_vectors(center_x, center_y, target_center_x, target_center_y)
   local speed = 200
-  local bullet = Bullet:new(center_x, center_y, speed * vx, speed * vy)
+  local firing_angle = self.angle + math.pi
+  local bullet = Bullet:new(center_x, center_y, speed * math.cos(firing_angle), speed * math.sin(firing_angle))
 end
 
 function Gun:clear_target()
