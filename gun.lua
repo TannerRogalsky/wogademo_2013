@@ -84,15 +84,7 @@ function Gun:base_mode_render()
 end
 
 function Gun:gun_mode_render()
-  g.setColor(COLORS.yellow:rgb())
   local x, y = self:world_center()
-  g.circle("fill", x, y, self.radius)
-
-  love.graphics.setColor(COLORS.black:rgb())
-  local point_on_circle_x = x + self.radius * math.cos(self.angle + math.pi)
-  local point_on_circle_y = y + self.radius * math.sin(self.angle + math.pi)
-  love.graphics.line(x, y, point_on_circle_x, point_on_circle_y)
-
   -- draws from the center
   g.setColor(COLORS.white:rgb())
   g.draw(self.image, x, y, self.angle - math.pi / 2, 1, 1, self.width * self.parent.tile_width / 2, self.height * self.parent.tile_height / 2)
