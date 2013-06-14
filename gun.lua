@@ -103,7 +103,7 @@ function Gun:update_crew_upgrades(num_crew)
     for field,value in pairs(self.crew_upgrades[self.num_crew]) do
       self[field] = value
     end
-  else
+  elseif self.target then
     self:clear_target()
   end
 end

@@ -24,13 +24,14 @@ function Main:enteredState()
     self.map:add_entity(gun)
   end
 
-  for i=1,3 do
-    local _,room = next(self.map.rooms)
-    local target = room:get_first_unoccupied_position()
-    local entity = Crew:new(self.map, target.x, target.y)
-    room:set_position(entity, target)
-    room:add_crew(entity)
-    self.map:add_entity(entity)
+  for _,room in pairs(self.map.rooms) do
+    for i=1,1 do
+      local target = room:get_first_unoccupied_position()
+      local entity = Crew:new(self.map, target.x, target.y)
+      room:set_position(entity, target)
+      room:add_crew(entity)
+      self.map:add_entity(entity)
+    end
   end
 
   cron.every(0.1, function()
