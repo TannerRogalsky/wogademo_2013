@@ -27,16 +27,12 @@ local FollowsPath = {
         cron.cancel(self.follow_path_cron_id)
         self.physics_body:moveTo(self:world_center())
 
-        if self.follow_path_target == self.parent.grid:g(self.x, self.y) then
-          beholder.trigger("crew_at_path_target", self)
+        if is_func(callback) then
+          callback(self)
         end
 
         self.follow_path_cron_id = nil
         self.follow_path_target = nil
-
-        if is_func(callback) then
-          callback(self)
-        end
 
         -- maybe this is a good solution to cancelling the path and then starting one right away?
         -- too tired to tell if it really scales

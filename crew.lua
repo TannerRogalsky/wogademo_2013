@@ -10,8 +10,6 @@ function Crew:initialize(parent, x, y)
   self.physics_body = Collider:addRectangle(self:world_bounds())
   self.physics_body.parent = self
   Collider:addToGroup("friendly", self.physics_body)
-
-  beholder.observe("crew_at_path_target", self, function() self:at_path_target() end)
 end
 
 function Crew:at_path_target()

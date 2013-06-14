@@ -177,7 +177,12 @@ function Main:right_mouse_down(x, y)
 
           -- clear the path we're on right now if we are then follow the new path
           local function follow_path_wrapper()
-            entity:follow_path(path, nil, function() self.map:remove_entity(target_indicator) end)
+            entity:follow_path(path, nil, function()
+              if entity.follow_path_target == self.map.grid:g(entity.x, entity.y) then
+                entity:at_path_target()
+              end
+              self.map:remove_entity(target_indicator)
+            end)
           end
           if is_pathing then
             entity:cancel_follow_path(follow_path_wrapper)
@@ -277,7 +282,7 @@ end
 -- Note that if one of the shapes is a point shape, the translation vector will be invalid.
 function Main.on_start_collide(dt, shape_one, shape_two, mtv_x, mtv_y)
   local object_one, object_two = shape_one.parent, shape_two.parent
-  print(object_one, object_two)
+  -- print(object_one, object_two)
 
   if object_one and is_func(object_one.on_collide) then
     object_one:on_collide(dt, object_two, mtv_x, mtv_y)
