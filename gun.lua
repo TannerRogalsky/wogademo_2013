@@ -23,6 +23,22 @@ function Gun:initialize(parent, x, y, w, h)
   end)
 
   LOD.delegates[self.id] = self
+
+  self.num_crew = 0
+  self.crew_upgrades = {
+    [1] = {
+      firing_speed = 0.3,
+      rotation_speed = math.rad(1)
+    },
+    [2] = {
+      firing_speed = 0.2,
+      rotation_speed = math.rad(3)
+    },
+    [3] = {
+      firing_speed = 0.1,
+      rotation_speed = math.rad(5)
+    }
+  }
 end
 
 function Gun:update(dt)
@@ -34,7 +50,7 @@ function Gun:update(dt)
     local delta_angle = desired_angle - self.angle
     delta_angle = math.clamp(-self.rotation_speed, delta_angle, self.rotation_speed)
     self.angle = self.angle + delta_angle
-  else
+  elseif self.num_crew > 0 then
     -- this seems to be a pretty common pattern. Maybe refactor?
     local _,closest = next(Enemy.instances)
     local distances = {closest = math.huge}
@@ -78,6 +94,18 @@ function Gun:clear_target()
   self.target = nil
   cron.cancel(self.firing_cron_id)
   self.firing_cron_id = nil
+end
+
+function Gun:update_crew_upgrades(num_crew)
+  self.num_crew = num_crew
+
+  if self.num_crew > 0 then
+    for field,value in pairs(self.crew_upgrades[self.num_crew]) do
+      self[field] = value
+    end
+  else
+    self:clear_target()
+  end
 end
 
 function Gun:base_mode_render()

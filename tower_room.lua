@@ -6,6 +6,8 @@ function TowerRoom:initialize(parent, x, y, width, height)
   self.walls, self.gates = {}, {}
   self.max_crew = 0
   self.crew_positions = {}
+  self.occupied_crew_positions = {}
+  self.crew = {}
 
   for _, _, tile in self.parent:each(self.x, self.y, self.width, self.height) do
     -- check if you're in the outside row
@@ -26,8 +28,6 @@ function TowerRoom:initialize(parent, x, y, width, height)
       self.max_crew = self.max_crew + 1
     end
   end
-
-  self.occupied_crew_positions = {}
 
   self.z = 100
   self.render = self.base_mode_render
@@ -84,6 +84,24 @@ function TowerRoom:set_position(entity, target)
   assert(instanceOf(MapEntity, entity))
   assert(instanceOf(MapTile, target))
   self.occupied_crew_positions[target] = entity
+end
+
+function TowerRoom:add_crew(crew)
+  table.insert(self.crew, crew)
+  crew.crew_table_index = #self.crew
+
+  for id,gun in pairs(self.emplacements) do
+    gun:update_crew_upgrades(#self.crew)
+  end
+end
+
+function TowerRoom:remove_crew(crew)
+  table.remove(self.crew, crew.crew_table_index)
+  crew.crew_table_index = nil
+
+  for id,gun in pairs(self.emplacements) do
+    gun:update_crew_upgrades(#self.crew)
+  end
 end
 
 function TowerRoom:add_to_map(map)

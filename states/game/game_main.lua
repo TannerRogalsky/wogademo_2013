@@ -29,6 +29,7 @@ function Main:enteredState()
     local target = room:get_first_unoccupied_position()
     local entity = Crew:new(self.map, target.x, target.y)
     room:set_position(entity, target)
+    room:add_crew(entity)
     self.map:add_entity(entity)
   end
 
@@ -173,6 +174,9 @@ function Main:right_mouse_down(x, y)
           local current_room = occupied_tile:get_first_content_of_type(TowerRoom)
           if current_room then
             current_room.occupied_crew_positions[occupied_tile] = nil
+          end
+          if entity.crew_table_index then
+            current_room:remove_crew(entity)
           end
 
           -- clear the path we're on right now if we are then follow the new path

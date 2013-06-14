@@ -13,7 +13,10 @@ function Crew:initialize(parent, x, y)
 end
 
 function Crew:at_path_target()
-  print("successfully got to path target: " .. self)
+  local tile = self.parent.grid:g(self.x, self.y)
+  local room = tile:get_first_content_of_type(TowerRoom)
+
+  room:add_crew(self)
 end
 
 function Crew:update(dt)
