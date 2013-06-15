@@ -9,6 +9,11 @@ function Bullet:initialize(x, y, vel_x, vel_y, target)
   self.vel_x, self.vel_y = vel_x, vel_y
   self.target = target
 
+  self.color = {}
+  for k,v in pairs(COLORS.red) do
+    self.color[k] = v
+  end
+
   self.physics_body = Collider:addPoint(self.x, self.y)
   self.physics_body.parent = self
   Collider:addToGroup("friendly", self.physics_body)
@@ -31,7 +36,8 @@ function Bullet:destroy()
 end
 
 function Bullet:render()
-  g.setColor(COLORS.red:rgb())
+  local c = self.color
+  g.setColor(c.r, c.g, c.b, c.a)
   g.circle("fill", self.x, self.y, 5)
 end
 

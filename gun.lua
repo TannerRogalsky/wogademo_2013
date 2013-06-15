@@ -10,10 +10,17 @@ function Gun:initialize(parent, x, y, w, h)
   self.rotation_speed = math.rad(1)
   self.radius = self.width * self.parent.tile_width / 2
 
-  self.z = 1
+  self.z = 200
 
-  self.render = self.base_mode_render
+  self.render = self.gun_mode_render
 
+  self.color = {}
+  for k,v in pairs(COLORS.white) do
+    self.color[k] = v
+  end
+  self.color.a = 0
+
+  self.base_image = game.preloaded_image["base.png"]
   self.image = game.preloaded_image["gun.png"]
 
   beholder.observe("enemied_destroyed", function(enemy)
@@ -121,22 +128,21 @@ end
 
 function Gun:gun_mode_render()
   local x, y = self:world_center()
+  local c = self.color
+  g.setColor(c.r, c.g, c.b, c.a)
+
+  g.draw(self.base_image, self.world_x, self.world_y)
+
   -- draws from the center
-  g.setColor(COLORS.white:rgb())
   g.draw(self.image, x, y, self.angle - math.pi / 2, 1, 1, self.width * self.parent.tile_width / 2, self.height * self.parent.tile_height / 2)
 end
 
 function Gun:on_graphics_scale(x, y, dx, dy)
+  tween.stop(self.alpha_tween_id)
   if x < 1 then
-    self.parent.render_queue:delete(self)
-    self.z = 1
-    self.render = self.base_mode_render
-    self.parent.render_queue:insert(self)
+    self.alpha_tween_id = tween(0.3, self.color, {a = 0})
   else
-    self.parent.render_queue:delete(self)
-    self.z = 201
-    self.render = self.gun_mode_render
-    self.parent.render_queue:insert(self)
+    self.alpha_tween_id = tween(0.3, self.color, {a = 255})
   end
 end
 
