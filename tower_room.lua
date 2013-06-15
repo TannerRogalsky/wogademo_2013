@@ -130,8 +130,10 @@ function TowerRoom:remove_from_map(map)
 end
 
 function TowerRoom:render()
-g.setColor(COLORS.grey:rgb())
-  g.rectangle("fill", self.world_x, self.world_y, self.width * self.parent.tile_width, self.height * self.parent.tile_height)
+  local pixel_width, pixel_height = self.width * self.parent.tile_width, self.height * self.parent.tile_height
+
+  g.setColor(COLORS.grey:rgb())
+  g.rectangle("fill", self.world_x, self.world_y, pixel_width, pixel_height)
 
   for id,wall in pairs(self.walls) do
     wall:render()
@@ -139,6 +141,12 @@ g.setColor(COLORS.grey:rgb())
   -- for id,gate in pairs(self.gates) do
   --   gate:render()
   -- end
+
+  local x, y = game.camera:mousePosition()
+  if self:contains(x, y) then
+    g.setColor(COLORS.yellow:rgb())
+    g.rectangle("line", self.world_x, self.world_y, pixel_width, pixel_height)
+  end
 end
 
 TowerRoom.__lt = MapEntity.__lt

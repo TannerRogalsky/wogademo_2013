@@ -40,6 +40,12 @@ function MapEntity:grid_center()
   return self.x + math.floor(self.width / 2), self.y + math.floor(self.height / 2)
 end
 
+function MapEntity:contains(world_x, world_y)
+  return world_x > self.world_x and world_y > self.world_y and
+     world_x < self.world_x + self.width * self.parent.tile_width and
+     world_y < self.world_y + self.height * self.parent.tile_height
+end
+
 function MapEntity:__lt(other)
   if self.z < other.z then return true
   elseif self.z == other.z and self.id < other.id then return true
