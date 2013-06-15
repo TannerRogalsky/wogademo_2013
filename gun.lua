@@ -114,6 +114,9 @@ end
 function Gun:update_crew_upgrades(num_crew)
   self.num_crew = num_crew
 
+  local temp_target = self.target
+  if self.target then self:clear_target() end
+
   if self.num_crew > 0 then
     for field,value in pairs(self.crew_upgrades[self.num_crew]) do
       self[field] = value
@@ -121,6 +124,8 @@ function Gun:update_crew_upgrades(num_crew)
   elseif self.target then
     self:clear_target()
   end
+
+  if temp_target then self:shoot_at(temp_target) end
 end
 
 function Gun:base_mode_render()

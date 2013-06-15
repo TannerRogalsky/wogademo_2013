@@ -7,6 +7,7 @@ function Main:enteredState()
   self:init_control_map()
 
   self.map = Map:new(0, 0, 50, 30, tile_size, tile_size)
+  self.selected_entities = {}
 
   -- this is all just debug stuff from here on down
   for i=1,3 do
@@ -77,10 +78,10 @@ function Main:render()
     bullet:render()
   end
 
-  g.setColor(COLORS.blue:rgb())
-  for k,v in pairs(Collider:shapesInRange(-100, -100, 700, 700)) do
-    v:draw("line")
-  end
+  -- g.setColor(COLORS.blue:rgb())
+  -- for k,v in pairs(Collider:shapesInRange(-100, -100, 700, 700)) do
+  --   v:draw("line")
+  -- end
 
   self.camera:unset()
 end
@@ -121,6 +122,8 @@ function Main:left_mouse_down(x, y)
   -- local tile = self.map.grid:g(grid_x, grid_y)
   local camera_x, camera_y = self.camera:mousePosition(x, y)
   self.left_mouse_down_pos = {x = camera_x, y = camera_y}
+
+  self:clear_selected_entities()
 end
 
 function Main:right_mouse_down(x, y)
@@ -134,14 +137,17 @@ function Main:right_mouse_down(x, y)
   end
 
   -- move selected entities to a given room if it's been clicked, otherwise deselect them
-  if self.selected_entities and room then
+  if room then
 
     local index = 1
     -- we may have multiple entities selected at once
     for id,entity in pairs(self.selected_entities) do
 
+      local entity_tile = self.map.grid:g(entity.x, entity.y)
+      local entity_room = entity_tile:get_first_content_of_type(TowerRoom)
+
       -- don't try to put more crew than there are spaces for in a room
-      while index <= room.max_crew do
+      while #room.crew < room.max_crew and index <= room.max_crew and room ~= entity_room do
         local target = room.crew_positions[index]
 
         -- there's nothing in that position, let's move to it!
@@ -176,9 +182,7 @@ function Main:right_mouse_down(x, y)
           if current_room then
             current_room.occupied_crew_positions[occupied_tile] = nil
           end
-          if entity.crew_table_index then
-            current_room:remove_crew(entity)
-          end
+          current_room:remove_crew(entity)
 
           -- clear the path we're on right now if we are then follow the new path
           local function follow_path_wrapper()
@@ -204,7 +208,7 @@ function Main:right_mouse_down(x, y)
       end
     end
   else
-    self.selected_entities = nil
+    self:clear_selected_entities()
   end
 end
 
@@ -212,11 +216,11 @@ function Main:left_mouse_up(x, y)
   if self.selection_box then
     local x, y, w, h = unpack(self.selection_box)
     local shapes = Collider:shapesInRange(x, y, x + w, y + h)
-    self.selected_entities = {}
     for _,shape in pairs(shapes) do
       local entity = shape.parent
       if instanceOf(Crew, entity) then
         self.selected_entities[entity.id] = entity
+        entity.selected = true
       end
     end
   end
@@ -299,6 +303,13 @@ function Main.on_start_collide(dt, shape_one, shape_two, mtv_x, mtv_y)
 end
 
 function Main.on_stop_collide(dt, shape_one, shape_two)
+end
+
+function Main:clear_selected_entities()
+  for _,entity in pairs(self.selected_entities) do
+    entity.selected = false
+  end
+  self.selected_entities = {}
 end
 
 function Main:exitedState()

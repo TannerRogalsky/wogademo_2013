@@ -85,7 +85,7 @@ end
 
 function TowerRoom:add_crew(crew)
   table.insert(self.crew, crew)
-  crew.crew_table_index = #self.crew
+  crew.color = COLORS.white
 
   for id,gun in pairs(self.emplacements) do
     gun:update_crew_upgrades(#self.crew)
@@ -93,11 +93,21 @@ function TowerRoom:add_crew(crew)
 end
 
 function TowerRoom:remove_crew(crew)
-  table.remove(self.crew, crew.crew_table_index)
-  crew.crew_table_index = nil
+  local crew_table_index = nil
 
-  for id,gun in pairs(self.emplacements) do
-    gun:update_crew_upgrades(#self.crew)
+  for index,room_crew in ipairs(self.crew) do
+    if room_crew == crew then
+      crew_table_index = index
+    end
+  end
+
+  if crew_table_index then
+    table.remove(self.crew, crew_table_index)
+    crew.color = COLORS.blue
+
+    for id,gun in pairs(self.emplacements) do
+      gun:update_crew_upgrades(#self.crew)
+    end
   end
 end
 
