@@ -32,10 +32,18 @@ function Gun:initialize(parent, x, y, w, h)
     },
     [2] = {
       firing_speed = 0.2,
-      rotation_speed = math.rad(3)
+      rotation_speed = math.rad(2)
     },
     [3] = {
       firing_speed = 0.1,
+      rotation_speed = math.rad(3)
+    },
+    [4] = {
+      firing_speed = 0.06,
+      rotation_speed = math.rad(4)
+    },
+    [5] = {
+      firing_speed = 0.03,
       rotation_speed = math.rad(5)
     }
   }
