@@ -145,7 +145,7 @@ function TowerRoom:render()
   local x, y = game.camera:mousePosition()
   if self:contains(x, y) then
     g.setColor(COLORS.yellow:rgb())
-    g.rectangle("line", self.world_x, self.world_y, pixel_width, pixel_height)
+    g.rectangle("line", self.world_x, self.world_y, pixel_width - 1, pixel_height - 1)
   end
 end
 

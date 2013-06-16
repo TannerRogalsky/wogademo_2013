@@ -51,6 +51,7 @@ require 'gun'
 require 'bullet'
 require 'crew'
 require 'enemy'
+require 'resources'
 require 'lod'
 
 local function require_all(directory)

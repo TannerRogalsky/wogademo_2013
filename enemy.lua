@@ -9,6 +9,8 @@ function Enemy:initialize(parent, x, y)
   self.z = 151
   self.speed = 50
 
+  self.resource_drop_chance = 1 / 10
+
   self.physics_body = Collider:addRectangle(self:world_bounds())
   self.physics_body.parent = self
   Collider:addToGroup("enemies", self.physics_body)
@@ -24,6 +26,11 @@ function Enemy:destroy()
 
   if self.attacking_cron_id then cron.cancel(self.attacking_cron_id) end
   if self.transition_cron_id then cron.cancel(self.transition_cron_id) end
+
+  if math.random() < self.resource_drop_chance then
+    local resource = Resources:new(self.parent, self.x, self.y)
+    self.parent:add_entity(resource)
+  end
 end
 
 function Enemy:render()
