@@ -10,9 +10,14 @@ function Main:enteredState()
   self.selected_entities = {}
 
   -- this is all just debug stuff from here on down
-  for i=1,3 do
-    for j=1,3 do
-      local room = TowerRoom:new(self.map, 15 + 3 * (i - 1), 12 + 3 * (j - 1), 3, 3)
+  local num_room_x, num_room_y = 3, 3
+  local room_width, room_height = 3, 3
+  for i=0,num_room_x - 1 do
+    for j=0,num_room_y - 1 do
+      -- center the rooms on the map
+      local x = math.floor(self.map.width / 2) - math.floor(num_room_x * room_width / 2) + room_width * i
+      local y = math.floor(self.map.height / 2) - math.floor(num_room_y * room_height / 2) + room_height * j
+      local room = TowerRoom:new(self.map, x, y, room_width, room_height)
       self.map.rooms[room.id] = room
       self.map:add_entity(room)
     end
