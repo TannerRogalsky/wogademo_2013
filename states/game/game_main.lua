@@ -234,25 +234,23 @@ function Main:left_mouse_up(x, y)
 end
 
 function Main:right_mouse_up(x, y)
-  self.right_mouse_down_pos, self.last_mouse_pos = nil, nil
+  self.right_mouse_down_pos = nil
 end
 
 function Main:mouse_wheel_up(x, y)
+  local center_x, center_y = g.getWidth() / 2, g.getHeight() / 2
+  local cw, ch = center_x * self.camera.scaleX, center_y * self.camera.scaleY
   self.camera:scale(0.9, 0.9)
-  local sx, sy = self.camera.scaleX, self.camera.scaleY
-  -- local cx, cy = (g.getWidth() / 2 - self.map.width * self.map.tile_width / 2) / sx, (g.getHeight() / 2 - self.map.height * self.map.tile_height / 2) / sy
-  local cx, cy = g.getWidth() / 4 / sx, g.getHeight() / 4 / sy
-  print(sx, sy, cx, cy)
-  self.camera:setPosition(cx, cy)
+  local delta_cw, delta_ch = cw - center_x * self.camera.scaleX, ch - center_y * self.camera.scaleY
+  self.camera:move(delta_cw, delta_ch)
 end
 
 function Main:mouse_wheel_down(x, y)
+  local center_x, center_y = g.getWidth() / 2, g.getHeight() / 2
+  local cw, ch = center_x * self.camera.scaleX, center_y * self.camera.scaleY
   self.camera:scale(1.1, 1.1)
-  local sx, sy = self.camera.scaleX, self.camera.scaleY
-  -- local cx, cy = (g.getWidth() / 2 - self.map.width * self.map.tile_width / 2) / sx, (g.getHeight() / 2 - self.map.height * self.map.tile_height / 2) / sy
-  local cx, cy = g.getWidth() / 4 / sx, g.getHeight() / 4 / sy
-  print(sx, sy, cx, cy)
-  self.camera:setPosition(cx, cy)
+  local delta_cw, delta_ch = cw - center_x * self.camera.scaleX, ch - center_y * self.camera.scaleY
+  self.camera:move(delta_cw, delta_ch)
 end
 
 
@@ -265,11 +263,6 @@ function Main:left_mouse_update(x, y)
 end
 
 function Main:right_mouse_update(x, y)
-  if self.right_mouse_down_pos and self.last_mouse_pos then
-    local last = self.last_mouse_pos
-    self.camera:move(last.x - x, last.y - y)
-  end
-  self.last_mouse_pos = {x = x, y = y}
 end
 
 function Main:mousepressed(x, y, button)
