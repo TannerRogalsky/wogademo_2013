@@ -6,7 +6,7 @@ end
 
 function Attacking:attack()
   assert(Enemy.instances[self.id], "Wrah! Polly shouldn't be! Wrah!")
-  print(self .. " attacked")
+  -- print(self .. " attacked")
 end
 
 function Attacking:exitedState()

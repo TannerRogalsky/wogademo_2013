@@ -239,10 +239,20 @@ end
 
 function Main:mouse_wheel_up(x, y)
   self.camera:scale(0.9, 0.9)
+  local sx, sy = self.camera.scaleX, self.camera.scaleY
+  -- local cx, cy = (g.getWidth() / 2 - self.map.width * self.map.tile_width / 2) / sx, (g.getHeight() / 2 - self.map.height * self.map.tile_height / 2) / sy
+  local cx, cy = g.getWidth() / 4 / sx, g.getHeight() / 4 / sy
+  print(sx, sy, cx, cy)
+  self.camera:setPosition(cx, cy)
 end
 
 function Main:mouse_wheel_down(x, y)
   self.camera:scale(1.1, 1.1)
+  local sx, sy = self.camera.scaleX, self.camera.scaleY
+  -- local cx, cy = (g.getWidth() / 2 - self.map.width * self.map.tile_width / 2) / sx, (g.getHeight() / 2 - self.map.height * self.map.tile_height / 2) / sy
+  local cx, cy = g.getWidth() / 4 / sx, g.getHeight() / 4 / sy
+  print(sx, sy, cx, cy)
+  self.camera:setPosition(cx, cy)
 end
 
 
