@@ -6,8 +6,11 @@ function Main:enteredState()
   Collider = HC(tile_size, self.on_start_collide, self.on_stop_collide)
   self:init_control_map()
 
-  self.map = Map:new(0, 0, 50, 30, tile_size, tile_size)
+  self.map = Map:new(0, 0, 80, 50, tile_size, tile_size)
   self.selected_entities = {}
+
+  local cx, cy = (g.getWidth() - self.map.width * self.map.tile_width) / 2, (g.getHeight() - self.map.height * self.map.tile_height) / 2
+  self.camera:setPosition(-cx, -cy)
 
   -- this is all just debug stuff from here on down
   local num_room_x, num_room_y = 3, 3
