@@ -53,6 +53,7 @@ require 'crew'
 require 'enemy'
 require 'resources'
 require 'lod'
+require 'game_ui'
 
 local function require_all(directory)
   local lfs = love.filesystem

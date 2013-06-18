@@ -12,6 +12,8 @@ function Main:enteredState()
   local cx, cy = (g.getWidth() - self.map.width * self.map.tile_width) / 2, (g.getHeight() - self.map.height * self.map.tile_height) / 2
   self.camera:setPosition(-cx, -cy)
 
+  self.game_ui = GameUI:new(self)
+
   -- this is all just debug stuff from here on down
   local num_room_x, num_room_y = 3, 3
   local room_width, room_height = 3, 3
