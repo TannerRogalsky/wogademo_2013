@@ -1,6 +1,8 @@
 Gun = class('Gun', MapEntity)
 Gun.static.targets = {}
 
+local vector  = require('lib.HardonCollider.vector-light')
+
 function Gun:initialize(parent, x, y, w, h)
   MapEntity.initialize(self, parent, x, y, w, h)
 
@@ -60,8 +62,33 @@ function Gun:update(dt)
   local x, y = self:world_center()
 
   if self.target then
-    local target_x, target_y = self.target:world_center()
-    local desired_angle = math.atan2(y - target_y, x - target_x)
+    local t = self.target
+    local target_x, target_y = t:world_center()
+    local target_vel_x, target_vel_y = t.speed * dt * math.cos(t.angle), t.speed * dt * math.sin(t.angle)
+    local delta_x, delta_y = target_x - x, target_y - y
+
+    local a = vector.dot(target_vel_x, target_vel_y, target_vel_x, target_vel_y) - (200 * 200)
+    local b = 2 * vector.dot(target_vel_x, target_vel_y, delta_x, delta_y)
+    local c = vector.dot(delta_x, delta_y, delta_x, delta_y)
+
+    local p = -b / (2 * a)
+    local q = math.sqrt((b * b) - 4 * a * c) / (2 * a)
+
+    local t1 = p - q
+    local t2 = p + q
+    local t = nil
+
+    if t1 > t2 and t2 > 0 then
+      t = t2
+    else
+      t = t1
+    end
+
+    local aim_spot_x, aim_spot_y = vector.mul(t, target_vel_x, target_vel_y)
+    aim_spot_x, aim_spot_y = vector.add(target_x, target_y, aim_spot_x, aim_spot_y)
+
+
+    local desired_angle = math.atan2(y - aim_spot_y, x - aim_spot_x)
     local delta_angle = desired_angle - self.angle
     delta_angle = math.clamp(-self.rotation_speed, delta_angle, self.rotation_speed)
     self.angle = self.angle + delta_angle
