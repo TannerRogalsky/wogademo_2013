@@ -62,12 +62,12 @@ function Gun:update(dt)
   local x, y = self:world_center()
 
   if self.target then
-    local t = self.target
+    local t, speed = self.target, 200
     local target_x, target_y = t:world_center()
     local target_vel_x, target_vel_y = t.speed * math.cos(t.angle), t.speed * math.sin(t.angle)
     local delta_x, delta_y = target_x - x, target_y - y
 
-    local a = vector.dot(target_vel_x, target_vel_y, target_vel_x, target_vel_y) - (200 * 200)
+    local a = vector.dot(target_vel_x, target_vel_y, target_vel_x, target_vel_y) - (speed * speed)
     local b = 2 * vector.dot(target_vel_x, target_vel_y, delta_x, delta_y)
     local c = vector.dot(delta_x, delta_y, delta_x, delta_y)
 
