@@ -64,7 +64,7 @@ function Gun:update(dt)
   if self.target then
     local t = self.target
     local target_x, target_y = t:world_center()
-    local target_vel_x, target_vel_y = t.speed * dt * math.cos(t.angle), t.speed * dt * math.sin(t.angle)
+    local target_vel_x, target_vel_y = t.speed * math.cos(t.angle), t.speed * math.sin(t.angle)
     local delta_x, delta_y = target_x - x, target_y - y
 
     local a = vector.dot(target_vel_x, target_vel_y, target_vel_x, target_vel_y) - (200 * 200)
@@ -86,7 +86,6 @@ function Gun:update(dt)
 
     local aim_spot_x, aim_spot_y = vector.mul(t, target_vel_x, target_vel_y)
     aim_spot_x, aim_spot_y = vector.add(target_x, target_y, aim_spot_x, aim_spot_y)
-
 
     local desired_angle = math.atan2(y - aim_spot_y, x - aim_spot_x)
     local delta_angle = desired_angle - self.angle
