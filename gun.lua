@@ -89,6 +89,11 @@ function Gun:update(dt)
 
     local desired_angle = math.atan2(y - aim_spot_y, x - aim_spot_x)
     local delta_angle = desired_angle - self.angle
+    -- compensate for trying to rotate more than 180 degrees
+    if math.abs(delta_angle) > math.pi then
+      delta_angle = delta_angle - math.pi * 2
+    end
+
     delta_angle = math.clamp(-self.rotation_speed, delta_angle, self.rotation_speed)
     self.angle = self.angle + delta_angle
   elseif self.num_crew > 0 then
