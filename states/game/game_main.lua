@@ -130,8 +130,15 @@ function Main:init_control_map()
 end
 
 function Main:left_mouse_down(x, y)
-  -- local grid_x, grid_y = self.map:world_to_grid_coords(self.camera:mousePosition(x, y))
-  -- local tile = self.map.grid:g(grid_x, grid_y)
+  local grid_x, grid_y = self.map:world_to_grid_coords(self.camera:mousePosition(x, y))
+  local tile = self.map.grid:g(grid_x, grid_y)
+
+  for id,entity in pairs(tile.content) do
+    if is_func(entity.left_mouse_down) then
+      entity:left_mouse_down(x, y)
+    end
+  end
+
   local camera_x, camera_y = self.camera:mousePosition(x, y)
   self.left_mouse_down_pos = {x = camera_x, y = camera_y}
 
@@ -273,6 +280,8 @@ function Main:right_mouse_update(x, y)
 end
 
 function Main:mousepressed(x, y, button)
+  if game.ui_active then return end -- slippery slope, man. Would be much better to find another way.
+
   local action = self.control_map.mouse.pressed[button]
   if is_func(action) then action(self, x, y) end
 end

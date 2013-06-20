@@ -1,8 +1,15 @@
 GameUI = class('GameUI', Base)
+GameUI.static.instance = nil
 
 function GameUI:initialize(game)
-  Base.initialize(self)
+  if GameUI.instance then
+    return GameUI.instance
+  end
 
+  Base.initialize(self)
+  GameUI.instance = self
+
+  self.game = game
   self.ui_font = g.newFont(20)
 
   local function draw_rect_and_children(object)
@@ -52,4 +59,30 @@ function GameUI:initialize(game)
   self.tower_health_bar:SetMinMax(0, 100)
   self.tower_health_bar:SetValue(65)
   self.tower_health_bar:SetLerp(true)
+end
+
+function GameUI:show_upgrade_ui(gun)
+  self.game.ui_active = true
+  local x, y, w, h = gun:world_bounds()
+
+  local upgrade_frame = loveframes.Create("frame")
+  upgrade_frame:SetSize(200, 200)
+  upgrade_frame:Center()
+  upgrade_frame:SetName("Upgrade")
+  upgrade_frame:SetScreenLocked(true)
+  function upgrade_frame.OnClose(object)
+    self.game.ui_active = false
+  end
+
+  local base_image = loveframes.Create("image", upgrade_frame)
+  base_image:SetImage(gun.base_image)
+  base_image:SetSize(50, 50)
+  base_image:SetPos(upgrade_frame:GetWidth() - base_image:GetWidth() - 20, 20)
+  base_image:SetScale(base_image:GetWidth() / w, base_image:GetHeight() / h)
+
+  local gun_image = loveframes.Create("image", upgrade_frame)
+  gun_image:SetImage(gun.image)
+  gun_image:SetSize(50, 50)
+  gun_image:SetPos(upgrade_frame:GetWidth() - gun_image:GetWidth() - 20, 20)
+  gun_image:SetScale(gun_image:GetWidth() / w, gun_image:GetHeight() / h)
 end
