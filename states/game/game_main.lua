@@ -16,9 +16,14 @@ function Main:enteredState()
 
   self.ui = GameUI:new(self)
 
-  -- this is all just debug stuff from here on down
+  -- start setting up game objects
   local num_room_x, num_room_y = 3, 3
   local room_width, room_height = 3, 3
+
+  self.tower = Tower:new(self.map,
+    math.floor(self.map.width / 2) - math.floor(num_room_x * room_width / 2),
+    math.floor(self.map.height / 2) - math.floor(num_room_y * room_height / 2))
+
   for i=0,num_room_x - 1 do
     for j=0,num_room_y - 1 do
       -- center the rooms on the map
@@ -27,8 +32,11 @@ function Main:enteredState()
       local room = TowerRoom:new(self.map, x, y, room_width, room_height)
       self.map.rooms[room.id] = room
       self.map:add_entity(room)
+      self.tower.rooms[room.id] = room
     end
   end
+  self.tower:set_dimensions_from_rooms()
+  self.map:add_entity(self.tower)
   for id,room in pairs(self.map.rooms) do
     room:set_traversal_costs()
     local gun = Gun:new(self.map, room.x, room.y, room.width, room.height)
@@ -37,6 +45,7 @@ function Main:enteredState()
     self.map:add_entity(gun)
   end
 
+  -- pop some starting guys into the rooms
   for _,room in pairs(self.map.rooms) do
     for i=1,1 do
       local target = room:get_first_unoccupied_position()
@@ -47,6 +56,7 @@ function Main:enteredState()
     end
   end
 
+  -- start spawning enemies
   cron.every(0.1, function()
     local enemy = self.map:spawn_enemy(Enemy)
     local target = self.map:get_closest_room(enemy.x, enemy.y)
