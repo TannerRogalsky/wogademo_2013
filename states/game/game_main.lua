@@ -32,11 +32,11 @@ function Main:enteredState()
       local room = TowerRoom:new(self.map, x, y, room_width, room_height)
       self.map.rooms[room.id] = room
       self.map:add_entity(room)
-      self.tower.rooms[room.id] = room
+      self.tower:add_room(room)
     end
   end
-  self.tower:set_dimensions_from_rooms()
   self.map:add_entity(self.tower)
+
   for id,room in pairs(self.map.rooms) do
     room:set_traversal_costs()
     local gun = Gun:new(self.map, room.x, room.y, room.width, room.height)

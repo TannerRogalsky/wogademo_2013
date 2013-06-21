@@ -31,6 +31,18 @@ function Tower:set_dimensions_from_rooms()
   self.world_x, self.world_y = self.parent:grid_to_world_coords(self.x, self.y)
 end
 
+function Tower:add_room(room)
+  assert(instanceOf(TowerRoom, room))
+  self.rooms[room.id] = room
+  room.tower = self
+  self:set_dimensions_from_rooms()
+end
+
+function Tower:damage_for(damage)
+  self.health = self.health - damage
+  GameUI.instance.tower_health_bar:SetValue(self.health)
+end
+
 function Tower:render()
   -- g.setColor(COLORS.red:rgb())
   -- g.rectangle("fill", self.world_x, self.world_y, self.width * self.parent.tile_width, self.height * self.parent.tile_height)

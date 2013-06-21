@@ -57,7 +57,7 @@ function GameUI:initialize(game)
   self.tower_health_bar:SetSize(g.getWidth() - 20 * 2, 25)
   self.tower_health_bar:SetPos(20, g.getHeight() - self.tower_health_bar:GetHeight() - 10)
   self.tower_health_bar:SetMinMax(0, 100)
-  self.tower_health_bar:SetValue(65)
+  self.tower_health_bar:SetValue(100)
   self.tower_health_bar:SetLerp(true)
 end
 

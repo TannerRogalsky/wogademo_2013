@@ -9,6 +9,9 @@ function Enemy:initialize(parent, x, y)
   self.z = 151
   self.speed = 50
 
+  self.damage = 3
+  self.attack_speed = 0.6
+
   self.resource_drop_chance = 1 / 10
 
   self.physics_body = Collider:addRectangle(self:world_bounds())

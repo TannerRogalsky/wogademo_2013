@@ -2,7 +2,7 @@ local Moving = Enemy:addState('Moving')
 
 function Moving:enteredState(target)
   self.target = target or self.target
-  assert(instanceOf(MapEntity, self.target))
+  assert(instanceOf(TowerRoom, self.target))
 end
 
 function Moving:update(dt)
