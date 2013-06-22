@@ -5,6 +5,8 @@ function Tower:initialize(parent, x, y)
 
   self.health = 100
   self.rooms = {}
+
+  self.border_tiles = {}
 end
 
 function Tower:set_dimensions_from_rooms()
@@ -36,6 +38,14 @@ function Tower:add_room(room)
   self.rooms[room.id] = room
   room.tower = self
   self:set_dimensions_from_rooms()
+end
+
+function Tower:add_to_map(map)
+  for _, _, tile in map:each(self.x - 1, self.y - 1, self.width + 2, self.height + 2) do
+    if tile.x == self.x - 1 or tile.y == self.y - 1 or tile.x == self.x + self.width or tile.y == self.y + self.height then
+      self.border_tiles[tile.id] = tile
+    end
+  end
 end
 
 function Tower:damage_for(damage)
