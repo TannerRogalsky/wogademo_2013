@@ -14,9 +14,6 @@ function Gun:initialize(parent, x, y, w, h)
 
   self.z = 200
 
-  -- self.render = self.gun_mode_render
-  self.base_mode = true
-
   self.color = {}
   for k,v in pairs(COLORS.white) do
     self.color[k] = v
@@ -58,6 +55,8 @@ function Gun:initialize(parent, x, y, w, h)
       rotation_speed = math.rad(5)
     }
   }
+
+  self:gotoState("BaseMode")
 end
 
 function Gun:update(dt)
@@ -165,12 +164,6 @@ function Gun:update_crew_upgrades(num_crew)
   if temp_target then self:shoot_at(temp_target) end
 end
 
-function Gun:left_mouse_down(x, y)
-  if not self.base_mode then
-    GameUI.instance:show_upgrade_ui(self)
-  end
-end
-
 function Gun:render()
   local x, y = self:world_center()
   local c = self.color
@@ -180,17 +173,6 @@ function Gun:render()
 
   -- draws from the center
   g.draw(self.image, x, y, self.angle - math.pi / 2, 1, 1, self.width * self.parent.tile_width / 2, self.height * self.parent.tile_height / 2)
-end
-
-function Gun:on_graphics_scale(x, y, dx, dy)
-  tween.stop(self.alpha_tween_id)
-  if x < 1 then
-    self.base_mode = true
-    self.alpha_tween_id = tween(0.3, self.color, {a = 0})
-  else
-    self.base_mode = false
-    self.alpha_tween_id = tween(0.3, self.color, {a = 255})
-  end
 end
 
 function Gun:on_graphics_translate() end

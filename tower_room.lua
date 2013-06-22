@@ -27,7 +27,6 @@ function TowerRoom:initialize(parent, x, y, width, height)
   end
 
   self.z = 100
-  self.render = self.base_mode_render
 
   self.emplacements = {}
 end
