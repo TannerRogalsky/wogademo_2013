@@ -151,8 +151,6 @@ function Main:left_mouse_down(x, y)
 
   local camera_x, camera_y = self.camera:mousePosition(x, y)
   self.left_mouse_down_pos = {x = camera_x, y = camera_y}
-
-  self:clear_selected_entities()
 end
 
 function Main:right_mouse_down(x, y)
@@ -178,6 +176,7 @@ function Main:right_mouse_down(x, y)
       -- don't try to put more crew than there are spaces for in a room
       while #room.crew < room:get_max_crew() and index <= room:get_max_crew() and room ~= entity_room do
         local target = room.crew_positions[index]
+
 
         -- there's nothing in that position, let's move to it!
         if room.occupied_crew_positions[target] == nil then
@@ -242,6 +241,11 @@ function Main:right_mouse_down(x, y)
 end
 
 function Main:left_mouse_up(x, y)
+  -- we've got our mouse over the ui so...
+  if not loveframes.hoverobject then
+    self:clear_selected_entities()
+  end
+
   if self.selection_box then
     local x, y, w, h = unpack(self.selection_box)
     local shapes = Collider:shapesInRange(x, y, x + w, y + h)

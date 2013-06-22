@@ -4,8 +4,8 @@ function GunMode:enteredState()
 end
 
 function GunMode:on_graphics_scale(x, y, dx, dy)
-  tween.stop(self.alpha_tween_id)
   if x < 1 then
+    tween.stop(self.alpha_tween_id)
     self.alpha_tween_id = tween(0.3, self.color, {a = 0})
     self:gotoState("BaseMode")
   end

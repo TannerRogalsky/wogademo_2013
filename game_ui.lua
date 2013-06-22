@@ -42,7 +42,7 @@ function GameUI:initialize(game)
   -- crew box
   self.crew_frame = loveframes.Create("frame")
   self.crew_frame:SetSize(200, 40)
-  self.crew_frame:SetPos(g.getWidth() - self.crew_frame:GetWidth() - 20, 10 + self.credits_frame:GetHeight() + 10)
+  self.crew_frame:SetPos(g.getWidth() - self.crew_frame:GetWidth() - 20, self.credits_frame:GetY() + self.credits_frame:GetHeight() + 10)
   self.crew_frame:SetDraggable(false)
   self.crew_frame:ShowCloseButton(false)
   self.crew_frame.draw = draw_rect_and_children
@@ -61,6 +61,44 @@ function GameUI:initialize(game)
   self.tower_health_bar:SetMinMax(0, 100)
   self.tower_health_bar:SetValue(100)
   self.tower_health_bar:SetLerp(true)
+
+  -- get resources button
+  self.collect_resources_button = loveframes.Create("button")
+  self.collect_resources_button:SetText("Collect")
+  self.collect_resources_button:SetPos(g.getWidth() - self.collect_resources_button:GetWidth() - 20,
+    self.crew_frame:GetY() + self.crew_frame:GetHeight() + 10)
+  function self.collect_resources_button:OnClick()
+    local entities = game.selected_entities
+
+    for _,entity in pairs(entities) do
+      if next(Resources.instances) == nil then
+        break
+      end
+
+      local x, y = entity:world_center()
+      local _, closest = next(Resources.instances)
+      local distances = {closest = math.huge}
+
+      for _,resource in pairs(Resources.instances) do
+        local resource_x, resource_y = resource:world_center()
+        local distance = math.sqrt(math.pow(resource_x - x, 2) + math.pow(resource_y - y, 2))
+        distances[resource] = distance
+
+        if distance < distances[closest] then
+          closest = resource
+        end
+      end
+
+      if closest then
+        local path = game.map:find_path(entity.x, entity.y, closest.x, closest.y)
+        entity:follow_path(path, nil, function()
+          print("wooo")
+        end)
+      end
+    end
+
+    game:clear_selected_entities()
+  end
 end
 
 function GameUI:show_upgrade_ui(gun)
