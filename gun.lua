@@ -144,6 +144,10 @@ function Gun:clear_target()
   self.firing_cron_id = nil
 end
 
+function Gun:upgrade()
+  self.max_crew = self.max_crew + 1
+end
+
 function Gun:update_crew_upgrades(num_crew)
   self.num_crew = num_crew
 

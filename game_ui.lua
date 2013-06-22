@@ -87,4 +87,11 @@ function GameUI:show_upgrade_ui(gun)
   gun_image:SetSize(50, 50)
   gun_image:SetPos(upgrade_frame:GetWidth() - gun_image:GetWidth() - 20, 20)
   gun_image:SetScale(gun_image:GetWidth() / w, gun_image:GetHeight() / h)
+
+  local upgrade_button = loveframes.Create("button", upgrade_frame)
+  upgrade_button:SetText("Upgrade")
+  upgrade_button:SetPos(50, 50)
+  function upgrade_button:OnClick()
+    gun:upgrade()
+  end
 end
