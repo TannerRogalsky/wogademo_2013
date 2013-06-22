@@ -164,17 +164,6 @@ function Gun:update_crew_upgrades(num_crew)
   if temp_target then self:shoot_at(temp_target) end
 end
 
-function Gun:render()
-  local x, y = self:world_center()
-  local c = self.color
-  g.setColor(c.r, c.g, c.b, c.a)
-
-  g.draw(self.base_image, self.world_x, self.world_y)
-
-  -- draws from the center
-  g.draw(self.image, x, y, self.angle - math.pi / 2, 1, 1, self.width * self.parent.tile_width / 2, self.height * self.parent.tile_height / 2)
-end
-
 function Gun:on_graphics_translate() end
 
 Gun.__lt = MapEntity.__lt

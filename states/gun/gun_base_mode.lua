@@ -11,6 +11,8 @@ function BaseMode:on_graphics_scale(x, y, dx, dy)
   end
 end
 
+function BaseMode:render() end
+
 function BaseMode:exitedState()
 end
 
