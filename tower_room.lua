@@ -4,7 +4,6 @@ function TowerRoom:initialize(parent, x, y, width, height)
   MapEntity.initialize(self, parent, x, y, width, height)
 
   self.walls, self.gates = {}, {}
-  self.max_crew = 0
   self.crew_positions = {}
   self.occupied_crew_positions = {}
   self.crew = {}
@@ -18,14 +17,12 @@ function TowerRoom:initialize(parent, x, y, width, height)
         local wall = Wall:new(self.parent, tile.x, tile.y)
         self.walls[wall.id] = wall
         table.insert(self.crew_positions, tile)
-        self.max_crew = self.max_crew + 1
       else
         local gate = Gate:new(self.parent, tile.x, tile.y)
         self.gates[gate.id] = gate
       end
     else
       table.insert(self.crew_positions, tile)
-      self.max_crew = self.max_crew + 1
     end
   end
 
@@ -67,7 +64,7 @@ end
 
 function TowerRoom:get_first_unoccupied_position()
   local index = 1
-  while index <= self.max_crew do
+  while index <= self:get_max_crew() do
     local target = self.crew_positions[index]
     if self.occupied_crew_positions[target] == nil then
       return target
@@ -75,6 +72,14 @@ function TowerRoom:get_first_unoccupied_position()
     index = index + 1
   end
   return nil
+end
+
+function TowerRoom:get_max_crew()
+  local max_crew = 0
+  for id,gun in pairs(self.emplacements) do
+    max_crew = max_crew + gun.max_crew
+  end
+  return max_crew
 end
 
 function TowerRoom:set_position(entity, target)

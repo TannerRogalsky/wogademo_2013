@@ -35,6 +35,7 @@ function Gun:initialize(parent, x, y, w, h)
   LOD.delegates[self.id] = self
 
   self.num_crew = 0
+  self.max_crew = 1
   self.crew_upgrades = {
     [1] = {
       firing_speed = 0.3,

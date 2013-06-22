@@ -176,7 +176,7 @@ function Main:right_mouse_down(x, y)
       local entity_room = entity_tile:get_first_content_of_type(TowerRoom)
 
       -- don't try to put more crew than there are spaces for in a room
-      while #room.crew < room.max_crew and index <= room.max_crew and room ~= entity_room do
+      while #room.crew < room:get_max_crew() and index <= room:get_max_crew() and room ~= entity_room do
         local target = room.crew_positions[index]
 
         -- there's nothing in that position, let's move to it!
