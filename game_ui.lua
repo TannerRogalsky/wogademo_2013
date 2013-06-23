@@ -66,7 +66,7 @@ function GameUI:initialize(game)
   self.collect_resources_button = loveframes.Create("button")
   self.collect_resources_button:SetText("Collect")
   self.collect_resources_button:SetPos(g.getWidth() - self.collect_resources_button:GetWidth() - 20,
-    self.crew_frame:GetY() + self.crew_frame:GetHeight() + 10)
+  self.crew_frame:GetY() + self.crew_frame:GetHeight() + 10)
   function self.collect_resources_button:OnClick()
     local entities = game.selected_entities
 
