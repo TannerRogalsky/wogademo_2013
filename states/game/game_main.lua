@@ -52,9 +52,11 @@ function Main:enteredState()
       local entity = Crew:new(self.map, target.x, target.y)
       room:set_position(entity, target)
       room:add_crew(entity)
+      self.player.crew = self.player.crew + 1
       self.map:add_entity(entity)
     end
   end
+  self.ui:update_crew_text()
 
   -- start spawning enemies
   cron.every(0.1, function()

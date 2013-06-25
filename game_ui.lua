@@ -33,11 +33,10 @@ function GameUI:initialize(game)
 
   self.credits_text = loveframes.Create("text")
   self.credits_text:SetParent(self.credits_frame)
-  self.credits_text:SetText({{COLORS.blue:rgb()}, "800 Credits"})
   self.credits_text:SetPos(20, 20)
   self.credits_text:CenterY()
   self.credits_text:SetFont(self.ui_font)
-
+  self:update_credits_text()
 
   -- crew box
   self.crew_frame = loveframes.Create("frame")
@@ -49,10 +48,10 @@ function GameUI:initialize(game)
 
   self.crew_text = loveframes.Create("text")
   self.crew_text:SetParent(self.crew_frame)
-  self.crew_text:SetText({{COLORS.green:rgb()}, "9 Crew"})
   self.crew_text:SetPos(20, 20)
   self.crew_text:CenterY()
   self.crew_text:SetFont(self.ui_font)
+  self:update_crew_text()
 
   -- tower health bar
   self.tower_health_bar = loveframes.Create("progressbar")
@@ -157,4 +156,12 @@ function GameUI:show_upgrade_ui(gun)
   rotation_text:SetText({{COLORS.black:rgb()}, "Degrees/second: " .. math.deg(gun.rotation_speed)})
   rotation_text:SetPos(padding_x, shots_text:GetStaticY() + padding_y)
   rotation_text:SetFont(upgrade_font)
+end
+
+function GameUI:update_credits_text()
+  self.credits_text:SetText({{COLORS.blue:rgb()}, game.player.resources .. " Credits"})
+end
+
+function GameUI:update_crew_text()
+  self.crew_text:SetText({{COLORS.green:rgb()}, game.player.crew .. " Crew"})
 end
