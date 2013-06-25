@@ -103,59 +103,64 @@ end
 function GameUI:show_upgrade_ui(gun)
   local upgrade_font = g.newFont(14)
 
+  local ui = {}
+
   self.game.ui_active = true
   local x, y, w, h = gun:world_bounds()
 
-  local upgrade_frame = loveframes.Create("frame")
-  upgrade_frame:SetSize(200, 200)
-  upgrade_frame:Center()
-  upgrade_frame:SetName("Upgrade")
-  upgrade_frame:SetScreenLocked(true)
-  function upgrade_frame.OnClose(object)
+  ui.upgrade_frame = loveframes.Create("frame")
+  ui.upgrade_frame:SetSize(200, 200)
+  ui.upgrade_frame:Center()
+  ui.upgrade_frame:SetName("Upgrade")
+  ui.upgrade_frame:SetScreenLocked(true)
+  function ui.upgrade_frame.OnClose(object)
     self.game.ui_active = false
   end
 
-  local base_image = loveframes.Create("image", upgrade_frame)
-  base_image:SetImage(gun.base_image)
-  base_image:SetSize(50, 50)
-  base_image:SetPos(upgrade_frame:GetWidth() - base_image:GetWidth() - 10, 30)
-  base_image:SetScale(base_image:GetWidth() / w, base_image:GetHeight() / h)
+  ui.base_image = loveframes.Create("image", ui.upgrade_frame)
+  ui.base_image:SetImage(gun.base_image)
+  ui.base_image:SetSize(50, 50)
+  ui.base_image:SetPos(ui.upgrade_frame:GetWidth() - ui.base_image:GetWidth() - 10, 30)
+  ui.base_image:SetScale(ui.base_image:GetWidth() / w, ui.base_image:GetHeight() / h)
 
-  local gun_image = loveframes.Create("image", upgrade_frame)
-  gun_image:SetImage(gun.image)
-  gun_image:SetSize(50, 50)
-  gun_image:SetPos(upgrade_frame:GetWidth() - gun_image:GetWidth() - 10, 30)
-  gun_image:SetScale(gun_image:GetWidth() / w, gun_image:GetHeight() / h)
+  ui.gun_image = loveframes.Create("image", ui.upgrade_frame)
+  ui.gun_image:SetImage(gun.image)
+  ui.gun_image:SetSize(50, 50)
+  ui.gun_image:SetPos(ui.upgrade_frame:GetWidth() - ui.gun_image:GetWidth() - 10, 30)
+  ui.gun_image:SetScale(ui.gun_image:GetWidth() / w, ui.gun_image:GetHeight() / h)
 
-  local padding_x, padding_y = 5, 30
+  local padding_x, padding_y = 5, upgrade_font:getHeight() + 5
 
-  local upgrade_button = loveframes.Create("button", upgrade_frame)
-  upgrade_button:SetSize(125, 25)
-  upgrade_button:SetText("Upgrade: " .. gun:upgrade_cost() .. " credits")
-  upgrade_button:SetPos(padding_x, padding_y)
-  function upgrade_button:OnClick()
-    gun:upgrade()
+  ui.upgrade_button = loveframes.Create("button", ui.upgrade_frame)
+  ui.upgrade_button:SetSize(125, 25)
+  ui.upgrade_button:SetPos(padding_x, 30)
+  function ui.upgrade_button.OnClick(button)
+    if game.player.resources >= gun:upgrade_cost() then
+      gun:upgrade()
+      self:update_upgrade_text(gun)
+    else
+      print("no can do, guv")
+    end
   end
 
-  local level_text = loveframes.Create("text", upgrade_frame)
-  level_text:SetText({{COLORS.black:rgb()}, "Level: " .. gun.max_crew})
-  level_text:SetPos(padding_x, upgrade_button:GetStaticY() + upgrade_button:GetHeight() + 10)
-  level_text:SetFont(upgrade_font)
+  ui.level_text = loveframes.Create("text", ui.upgrade_frame)
+  ui.level_text:SetPos(padding_x, ui.upgrade_button:GetStaticY() + ui.upgrade_button:GetHeight() + 10)
+  ui.level_text:SetFont(upgrade_font)
 
-  local damage_text = loveframes.Create("text", upgrade_frame)
-  damage_text:SetText({{COLORS.black:rgb()}, "Damage: " .. gun.damage})
-  damage_text:SetPos(padding_x, level_text:GetStaticY() + padding_y)
-  damage_text:SetFont(upgrade_font)
+  ui.damage_text = loveframes.Create("text", ui.upgrade_frame)
+  ui.damage_text:SetPos(padding_x, ui.level_text:GetStaticY() + padding_y)
+  ui.damage_text:SetFont(upgrade_font)
 
-  local shots_text = loveframes.Create("text", upgrade_frame)
-  shots_text:SetText({{COLORS.black:rgb()}, "Shots/minute: " .. 60 / gun.firing_speed})
-  shots_text:SetPos(padding_x, damage_text:GetStaticY() + padding_y)
-  shots_text:SetFont(upgrade_font)
+  ui.shots_text = loveframes.Create("text", ui.upgrade_frame)
+  ui.shots_text:SetPos(padding_x, ui.damage_text:GetStaticY() + padding_y)
+  ui.shots_text:SetFont(upgrade_font)
 
-  local rotation_text = loveframes.Create("text", upgrade_frame)
-  rotation_text:SetText({{COLORS.black:rgb()}, "Degrees/second: " .. math.deg(gun.rotation_speed)})
-  rotation_text:SetPos(padding_x, shots_text:GetStaticY() + padding_y)
-  rotation_text:SetFont(upgrade_font)
+  ui.rotation_text = loveframes.Create("text", ui.upgrade_frame)
+  ui.rotation_text:SetPos(padding_x, ui.shots_text:GetStaticY() + padding_y)
+  ui.rotation_text:SetFont(upgrade_font)
+
+  self.upgrade_ui = ui
+  self:update_upgrade_text(gun)
 end
 
 function GameUI:update_credits_text()
@@ -164,4 +169,15 @@ end
 
 function GameUI:update_crew_text()
   self.crew_text:SetText({{COLORS.green:rgb()}, game.player.crew .. " Crew"})
+end
+
+function GameUI:update_upgrade_text(gun)
+  local level = gun.max_crew
+  local stats = gun.crew_upgrades[level]
+
+  self.upgrade_ui.upgrade_button:SetText("Upgrade: " .. gun:upgrade_cost() .. " credits")
+  self.upgrade_ui.level_text:SetText({{COLORS.black:rgb()}, "Level: " .. level})
+  self.upgrade_ui.damage_text:SetText({{COLORS.black:rgb()}, "Damage: " .. stats.damage})
+  self.upgrade_ui.shots_text:SetText({{COLORS.black:rgb()}, "Shots/minute: " .. 60 / stats.firing_speed})
+  self.upgrade_ui.rotation_text:SetText({{COLORS.black:rgb()}, "Degrees/second: " .. math.deg(stats.rotation_speed)})
 end

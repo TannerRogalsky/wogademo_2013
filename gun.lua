@@ -39,22 +39,27 @@ function Gun:initialize(parent, x, y, w, h)
   self.crew_upgrades = {
     [1] = {
       firing_speed = 0.3,
+      damage = 1,
       rotation_speed = math.rad(1)
     },
     [2] = {
       firing_speed = 0.2,
+      damage = 2,
       rotation_speed = math.rad(2)
     },
     [3] = {
       firing_speed = 0.1,
+      damage = 3,
       rotation_speed = math.rad(3)
     },
     [4] = {
       firing_speed = 0.06,
+      damage = 4,
       rotation_speed = math.rad(4)
     },
     [5] = {
       firing_speed = 0.03,
+      damage = 5,
       rotation_speed = math.rad(5)
     }
   }
