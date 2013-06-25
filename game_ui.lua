@@ -102,6 +102,8 @@ function GameUI:initialize(game)
 end
 
 function GameUI:show_upgrade_ui(gun)
+  local upgrade_font = g.newFont(14)
+
   self.game.ui_active = true
   local x, y, w, h = gun:world_bounds()
 
@@ -117,19 +119,42 @@ function GameUI:show_upgrade_ui(gun)
   local base_image = loveframes.Create("image", upgrade_frame)
   base_image:SetImage(gun.base_image)
   base_image:SetSize(50, 50)
-  base_image:SetPos(upgrade_frame:GetWidth() - base_image:GetWidth() - 20, 20)
+  base_image:SetPos(upgrade_frame:GetWidth() - base_image:GetWidth() - 10, 30)
   base_image:SetScale(base_image:GetWidth() / w, base_image:GetHeight() / h)
 
   local gun_image = loveframes.Create("image", upgrade_frame)
   gun_image:SetImage(gun.image)
   gun_image:SetSize(50, 50)
-  gun_image:SetPos(upgrade_frame:GetWidth() - gun_image:GetWidth() - 20, 20)
+  gun_image:SetPos(upgrade_frame:GetWidth() - gun_image:GetWidth() - 10, 30)
   gun_image:SetScale(gun_image:GetWidth() / w, gun_image:GetHeight() / h)
 
+  local padding_x, padding_y = 5, 30
+
   local upgrade_button = loveframes.Create("button", upgrade_frame)
-  upgrade_button:SetText("Upgrade")
-  upgrade_button:SetPos(50, 50)
+  upgrade_button:SetSize(125, 25)
+  upgrade_button:SetText("Upgrade: " .. gun:upgrade_cost() .. " credits")
+  upgrade_button:SetPos(padding_x, padding_y)
   function upgrade_button:OnClick()
     gun:upgrade()
   end
+
+  local level_text = loveframes.Create("text", upgrade_frame)
+  level_text:SetText({{COLORS.black:rgb()}, "Level: " .. gun.max_crew})
+  level_text:SetPos(padding_x, upgrade_button:GetStaticY() + upgrade_button:GetHeight() + 10)
+  level_text:SetFont(upgrade_font)
+
+  local damage_text = loveframes.Create("text", upgrade_frame)
+  damage_text:SetText({{COLORS.black:rgb()}, "Damage: " .. gun.damage})
+  damage_text:SetPos(padding_x, level_text:GetStaticY() + padding_y)
+  damage_text:SetFont(upgrade_font)
+
+  local shots_text = loveframes.Create("text", upgrade_frame)
+  shots_text:SetText({{COLORS.black:rgb()}, "Shots/minute: " .. 60 / gun.firing_speed})
+  shots_text:SetPos(padding_x, damage_text:GetStaticY() + padding_y)
+  shots_text:SetFont(upgrade_font)
+
+  local rotation_text = loveframes.Create("text", upgrade_frame)
+  rotation_text:SetText({{COLORS.black:rgb()}, "Degrees/second: " .. math.deg(gun.rotation_speed)})
+  rotation_text:SetPos(padding_x, shots_text:GetStaticY() + padding_y)
+  rotation_text:SetFont(upgrade_font)
 end

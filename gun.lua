@@ -11,6 +11,9 @@ function Gun:initialize(parent, x, y, w, h)
   self.firing_speed = 0.3
   self.rotation_speed = math.rad(1)
   self.radius = self.width * self.parent.tile_width / 2
+  self.damage = 1
+
+  self.base_cost = 100
 
   self.z = 200
 
@@ -145,6 +148,10 @@ end
 
 function Gun:upgrade()
   self.max_crew = self.max_crew + 1
+end
+
+function Gun:upgrade_cost()
+  return self.base_cost * (self.max_crew + 1)
 end
 
 function Gun:update_crew_upgrades(num_crew)
