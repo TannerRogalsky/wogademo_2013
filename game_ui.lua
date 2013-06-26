@@ -66,34 +66,62 @@ function GameUI:initialize(game)
   self.collect_resources_button:SetText("Collect")
   self.collect_resources_button:SetPos(g.getWidth() - self.collect_resources_button:GetWidth() - 20,
   self.crew_frame:GetY() + self.crew_frame:GetHeight() + 10)
-  function self.collect_resources_button:OnClick()
+  function self.collect_resources_button.OnClick(button)
     local entities = game.selected_entities
 
     for _,entity in pairs(entities) do
-      if next(Resources.instances) == nil then
+      if next(Resource.instances) == nil then
         break
       end
 
-      local x, y = entity:world_center()
-      local _, closest = next(Resources.instances)
-      local distances = {closest = math.huge}
+      local function find_and_path(crew)
+        assert(instanceOf(Crew, crew))
 
-      for _,resource in pairs(Resources.instances) do
-        local resource_x, resource_y = resource:world_center()
-        local distance = math.sqrt(math.pow(resource_x - x, 2) + math.pow(resource_y - y, 2))
-        distances[resource] = distance
+        local x, y = entity:world_center()
+        local _, closest = next(Resource.instances)
+        local distances = {closest = math.huge}
 
-        if distance < distances[closest] then
-          closest = resource
+        -- find the closest resource to the given entity
+        for _,resource in pairs(Resource.instances) do
+          local resource_x, resource_y = resource:world_center()
+          local distance = math.sqrt(math.pow(resource_x - x, 2) + math.pow(resource_y - y, 2))
+          distances[resource] = distance
+
+          if Crew.targeted_resources[resource] == nil and distance < distances[closest] then
+            closest = resource
+          end
+        end
+
+        -- we found the closest resource and nobody is headed toward it
+        if closest and Crew.targeted_resources[closest] == nil then
+          local path = game.map:find_path(entity.x, entity.y, closest.x, closest.y)
+
+          local is_pathing = entity.follow_path_target ~= nil
+          local occupied_tile = self.game.map.grid:g(entity.x, entity.y)
+
+          -- actually clear the tile
+          local current_room = occupied_tile:get_first_content_of_type(TowerRoom)
+          if current_room then
+            current_room.occupied_crew_positions[occupied_tile] = nil
+            current_room:remove_crew(entity)
+          end
+
+          entity:follow_path(path, nil, function()
+            -- got to the resource
+            local resources = entity.follow_path_target:get_contents_of_type(Resource)
+            for id,resource in pairs(resources) do
+              self.game.player:collect(resource)
+              resource:destroy()
+            end
+
+            -- TODO: this is sort of a hack and makes me sad
+            -- follows_path still needs some work, you know?
+            cron.after(0.0001, find_and_path, entity)
+          end)
         end
       end
 
-      if closest then
-        local path = game.map:find_path(entity.x, entity.y, closest.x, closest.y)
-        entity:follow_path(path, nil, function()
-          print("wooo")
-        end)
-      end
+      find_and_path(entity)
     end
 
     game:clear_selected_entities()

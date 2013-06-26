@@ -1,4 +1,5 @@
 Crew = class('Crew', MapEntity)
+Crew.static.targeted_resources = {}
 MapEntity:include(Movable)
 MapEntity:include(FollowsPath)
 

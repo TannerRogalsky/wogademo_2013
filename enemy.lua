@@ -31,7 +31,7 @@ function Enemy:destroy()
   if self.transition_cron_id then cron.cancel(self.transition_cron_id) end
 
   if math.random() < self.resource_drop_chance then
-    local resource = Resources:new(self.parent, self.x, self.y)
+    local resource = Resource:new(self.parent, self.x, self.y)
     self.parent:add_entity(resource)
   end
 end

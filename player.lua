@@ -6,3 +6,9 @@ function Player:initialize(game)
   self.resources = 1000
   self.crew = 0
 end
+
+function Player:collect(resource)
+  assert(instanceOf(Resource, resource))
+  self.resources = self.resources + resource.worth
+  GameUI.instance:update_credits_text()
+end

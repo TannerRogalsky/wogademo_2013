@@ -98,8 +98,8 @@ function UIInactive:right_mouse_down(x, y)
           local current_room = occupied_tile:get_first_content_of_type(TowerRoom)
           if current_room then
             current_room.occupied_crew_positions[occupied_tile] = nil
+            current_room:remove_crew(entity)
           end
-          current_room:remove_crew(entity)
 
           -- clear the path we're on right now if we are then follow the new path
           local function follow_path_wrapper()
