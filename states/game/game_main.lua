@@ -45,6 +45,8 @@ function Main:enteredState()
     self.map:add_entity(gun)
   end
 
+  self.crew = {}
+
   -- pop some starting guys into the rooms
   for _,room in pairs(self.map.rooms) do
     for i=1,1 do
@@ -54,6 +56,8 @@ function Main:enteredState()
       room:add_crew(entity)
       self.player.crew = self.player.crew + 1
       self.map:add_entity(entity)
+
+      table.insert(self.crew, entity)
     end
   end
   self.ui:update_crew_text()
@@ -69,6 +73,12 @@ end
 function Main:update(dt)
   self.input_manager:update(dt)
   Collider:update(dt)
+
+  -- local s = ""
+  -- for i,v in ipairs(self.crew) do
+  --   s = s .. v.angle .. ", "
+  -- end
+  -- print(s)
 
   for id,room in pairs(self.map.rooms) do
     room:update(dt)

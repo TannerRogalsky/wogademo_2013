@@ -8,6 +8,8 @@ function TowerRoom:initialize(parent, x, y, width, height)
   self.occupied_crew_positions = {}
   self.crew = {}
 
+  self.image = game.preloaded_image["room_filled.png"]
+
   for _, _, tile in self.parent:each(self.x, self.y, self.width, self.height) do
     -- check if you're in the outside row
     if tile.x == self.x or tile.y == self.y or tile.x == self.x + self.width - 1 or tile.y == self.y + self.height - 1 then
@@ -136,12 +138,12 @@ end
 function TowerRoom:render()
   local pixel_width, pixel_height = self.width * self.parent.tile_width, self.height * self.parent.tile_height
 
-  g.setColor(COLORS.grey:rgb())
-  g.rectangle("fill", self.world_x, self.world_y, pixel_width, pixel_height)
+  g.setColor(COLORS.white:rgb())
+  g.draw(self.image, self.world_x, self.world_y, 0, 0.5)
 
-  for id,wall in pairs(self.walls) do
-    wall:render()
-  end
+  -- for id,wall in pairs(self.walls) do
+  --   wall:render()
+  -- end
   -- for id,gate in pairs(self.gates) do
   --   gate:render()
   -- end

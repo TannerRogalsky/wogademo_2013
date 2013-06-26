@@ -15,10 +15,12 @@ local FollowsPath = {
           self.physics_body:moveTo(self:world_center())
         end)
         local new_x, new_y = self.parent:grid_to_world_coords(new_tile.x, new_tile.y)
+        local delta_x, delta_y = new_tile.x - self.x, new_tile.y - self.y
 
         self:remove_from_grid()
         self.x, self.y = new_tile.x, new_tile.y
         self:insert_into_grid()
+        self.angle = math.atan2(delta_y, delta_x)
 
         self.follow_path_tween_id = tween(speed, self, {world_x = new_x, world_y = new_y}, "linear", tween_to_index, index + 1)
       else

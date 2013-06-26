@@ -24,7 +24,8 @@ function Gun:render()
   g.draw(self.base_image, self.world_x, self.world_y)
 
   -- draws from the center
-  g.draw(self.image, x, y, self.angle - math.pi / 2, 1, 1, self.width * self.parent.tile_width / 2, self.height * self.parent.tile_height / 2)
+  local w, h = self.image:getWidth(), self.image:getHeight()
+  g.draw(self.image, x, y, self.angle - math.pi / 2, 1, 1, w / 2, h / 2)
 end
 
 function GunMode:exitedState()

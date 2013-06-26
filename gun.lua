@@ -23,8 +23,8 @@ function Gun:initialize(parent, x, y, w, h)
   end
   self.color.a = 0
 
-  self.base_image = game.preloaded_image["base.png"]
-  self.image = game.preloaded_image["gun.png"]
+  self.base_image = game.preloaded_image["platform_mounted.png"]
+  self.image = game.preloaded_image["gun_plasma.png"]
 
   beholder.observe("enemied_destroyed", function(enemy)
     if enemy == self.target then

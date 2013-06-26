@@ -12,3 +12,8 @@ function Player:collect(resource)
   self.resources = self.resources + resource.worth
   GameUI.instance:update_credits_text()
 end
+
+function Player:charge(value)
+  assert(is_num(value))
+  self.resources = self.resources - value
+end

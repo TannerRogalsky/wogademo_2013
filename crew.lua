@@ -6,9 +6,14 @@ MapEntity:include(FollowsPath)
 function Crew:initialize(parent, x, y)
   MapEntity.initialize(self, parent, x, y, 1, 1)
 
+  self.angle = 0
+
   self.z = 150
   self.color = COLORS.blue
   self.selected = false
+
+  self.image = game.preloaded_image["crew_stand.png"]
+  self.selected_image = game.preloaded_image["crew_stand_selected.png"]
 
   self.physics_body = Collider:addRectangle(self:world_bounds())
   self.physics_body.parent = self
@@ -26,13 +31,19 @@ function Crew:update(dt)
 end
 
 function Crew:render()
-  g.setColor(self.color:rgb())
-  g.rectangle("fill", self.world_x, self.world_y, self.width * self.parent.tile_width, self.height * self.parent.tile_height)
+  g.setColor(COLORS.white:rgb())
+  local _, _, w, h = self:world_bounds()
+  local x, y = self:world_center()
 
+  local image = nil
   if self.selected then
-    g.setColor(COLORS.red:rgb())
-    g.rectangle("line", self.world_x, self.world_y, self.width * self.parent.tile_width, self.height * self.parent.tile_height)
+    image = self.selected_image
+  else
+    image = self.image
   end
+
+  local scale = 0.5
+  g.draw(image, x, y, self.angle - math.pi / 2, scale, scale, w * scale * 2, h * scale * 2)
 end
 
 Crew.__lt = MapEntity.__lt

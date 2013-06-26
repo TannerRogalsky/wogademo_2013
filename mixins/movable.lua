@@ -10,8 +10,8 @@ local Movable = {
     self:move(x - self.x, y - self.y)
   end,
 
-  move_by_pixel = function(self, x, y)
-    local new_x, new_y = self.world_x + x, self.world_y + y
+  move_by_pixel = function(self, delta_x, delta_y)
+    local new_x, new_y = self.world_x + delta_x, self.world_y + delta_y
     local _, _, bw, bh = self:world_bounds()
 
     -- bounds check
@@ -20,13 +20,18 @@ local Movable = {
 
       -- new grid coords are got from new pixel coords + half of a tile
       local new_grid_x, new_grid_y = self.parent:world_to_grid_coords(new_x + self.parent.tile_width / 2, new_y + self.parent.tile_height / 2)
-      self:remove_from_grid()
-      self.x, self.y = new_grid_x, new_grid_y
+
+      -- they're different from our current grid coords
+      if new_grid_x ~= self.x or new_grid_y ~= self.y then
+        self:remove_from_grid()
+        self.x, self.y = new_grid_x, new_grid_y
+        self:insert_into_grid()
+      end
       self.world_x, self.world_y = new_x, new_y
-      self:insert_into_grid()
+      self.angle = math.atan2(delta_y, delta_x)
 
       if self.physics_body then
-        self.physics_body:move(x, y)
+        self.physics_body:move(delta_x, delta_y)
       end
     end
   end

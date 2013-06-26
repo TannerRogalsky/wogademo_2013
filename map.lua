@@ -49,10 +49,9 @@ function Map:initialize(x, y, width, height, tile_width, tile_height)
   self.grid_canvas = g.newCanvas(self.grid.width * self.tile_width, self.grid.height * self.tile_height)
   g.setCanvas(self.grid_canvas)
   g.setColor(COLORS.white:rgb())
+  local grass_image = game.preloaded_image["grass.png"]
   for x, y, _ in self.grid:each() do
-    g.rectangle("line", (x - 1) * self.tile_width, (y - 1) * self.tile_width, self.tile_height, self.tile_height)
-    -- g.print(x, (x - 1) * self.tile_width, (y - 1) * self.tile_height)
-    -- g.print(y, (x - 1) * self.tile_width, (y - 1) * self.tile_height + self.tile_height / 2)
+    g.draw(grass_image, (x - 1) * self.tile_width, (y - 1) * self.tile_width)
   end
   g.setCanvas()
 end

@@ -175,6 +175,8 @@ function GameUI:show_upgrade_ui(gun)
   ui.upgrade_button:SetPos(padding_x, 30)
   function ui.upgrade_button.OnClick(button)
     if game.player.resources >= gun:upgrade_cost() then
+      game.player:charge(gun:upgrade_cost())
+      self:update_credits_text()
       gun:upgrade()
       self:update_upgrade_text(gun)
     else
