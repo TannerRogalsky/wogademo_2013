@@ -4,7 +4,6 @@ function Main:enteredState()
   local tile_size = 25
 
   Collider = HC(tile_size, self.on_start_collide, self.on_stop_collide)
-  self:init_control_map()
 
   self.player = Player:new()
 
@@ -15,6 +14,7 @@ function Main:enteredState()
   self.camera:setPosition(-cx, -cy)
 
   self.ui = GameUI:new(self)
+  self.input_manager = GameInput:new(self)
 
   -- start setting up game objects
   local num_room_x, num_room_y = 3, 3
@@ -67,11 +67,7 @@ function Main:enteredState()
 end
 
 function Main:update(dt)
-  local mouse_x, mouse_y = love.mouse.getPosition()
-  for key, action in pairs(self.control_map.mouse.update) do
-    if love.mouse.isDown(key) then action(self, mouse_x, mouse_y) end
-  end
-
+  self.input_manager:update(dt)
   Collider:update(dt)
 
   for id,room in pairs(self.map.rooms) do
@@ -110,211 +106,20 @@ function Main:render()
   self.camera:unset()
 end
 
-function Main:init_control_map()
-  self.control_map = {
-    mouse = {
-      pressed = {
-        l = self.left_mouse_down,
-        r = self.right_mouse_down,
-        wu = self.mouse_wheel_up,
-        wd = self.mouse_wheel_down
-      },
-      released = {
-        l = self.left_mouse_up,
-        r = self.right_mouse_up
-      },
-      update = {
-        l = self.left_mouse_update,
-        r = self.right_mouse_update
-      }
-    },
-    keyboard = {
-      pressed = {
-        up = function(self) self.entity:move(Direction.NORTH:unpack()) end,
-        down = function(self) self.entity:move(Direction.SOUTH:unpack()) end,
-        left = function(self) self.entity:move(Direction.WEST:unpack()) end,
-        right = function(self) self.entity:move(Direction.EAST:unpack()) end,
-        [" "] = function(self) self.entity:cancel_follow_path() end
-      },
-      released = {}
-    }
-  }
-end
-
-function Main:left_mouse_down(x, y)
-  local grid_x, grid_y = self.map:world_to_grid_coords(self.camera:mousePosition(x, y))
-  local tile = self.map.grid:g(grid_x, grid_y)
-
-  for id,entity in pairs(tile.content) do
-    if is_func(entity.left_mouse_down) then
-      entity:left_mouse_down(x, y)
-    end
-  end
-
-  local camera_x, camera_y = self.camera:mousePosition(x, y)
-  self.left_mouse_down_pos = {x = camera_x, y = camera_y}
-end
-
-function Main:right_mouse_down(x, y)
-  self.right_mouse_down_pos = {x = x, y = y}
-  local grid_x, grid_y = self.map:world_to_grid_coords(self.camera:mousePosition(x, y))
-  local tile, room = self.map.grid:g(grid_x, grid_y), nil
-
-  -- did you click on a room?
-  if tile then
-    room = tile:get_first_content_of_type(TowerRoom)
-  end
-
-  -- move selected entities to a given room if it's been clicked, otherwise deselect them
-  if room then
-
-    local index = 1
-    -- we may have multiple entities selected at once
-    for id,entity in pairs(self.selected_entities) do
-
-      local entity_tile = self.map.grid:g(entity.x, entity.y)
-      local entity_room = entity_tile:get_first_content_of_type(TowerRoom)
-
-      -- don't try to put more crew than there are spaces for in a room
-      while #room.crew < room:get_max_crew() and index <= room:get_max_crew() and room ~= entity_room do
-        local target = room.crew_positions[index]
-
-
-        -- there's nothing in that position, let's move to it!
-        if room.occupied_crew_positions[target] == nil then
-          room.occupied_crew_positions[target] = entity
-
-          -- set up an entity to show where we're headed
-          local target_indicator = MapEntity:new(self.map, target.x, target.y)
-          target_indicator.z = entity.z
-          self.map:add_entity(target_indicator)
-          target_indicator.render = function(self)
-            local x, y = self:world_center()
-            g.setColor(COLORS.deepskyblue:rgb())
-            g.circle("fill", x, y, 5)
-          end
-
-          -- find the path
-          local path = self.map:find_path(entity.x, entity.y, target.x, target.y)
-
-          local is_pathing = entity.follow_path_target ~= nil
-
-          -- clear out the tile we're on or the one we were headed to
-          local occupied_tile = nil
-          if is_pathing then
-            occupied_tile = entity.follow_path_target
-          else
-            occupied_tile = self.map.grid:g(entity.x, entity.y)
-          end
-
-          -- actually clear the tile
-          local current_room = occupied_tile:get_first_content_of_type(TowerRoom)
-          if current_room then
-            current_room.occupied_crew_positions[occupied_tile] = nil
-          end
-          current_room:remove_crew(entity)
-
-          -- clear the path we're on right now if we are then follow the new path
-          local function follow_path_wrapper()
-            entity:follow_path(path, nil, function()
-              if entity.follow_path_target == self.map.grid:g(entity.x, entity.y) then
-                entity:at_path_target()
-              end
-              self.map:remove_entity(target_indicator)
-            end)
-          end
-          if is_pathing then
-            entity:cancel_follow_path(follow_path_wrapper)
-          else
-            follow_path_wrapper()
-          end
-
-          -- we're moving so we stop looking for a spot
-          index = index + 1
-          break
-        end
-
-        index = index + 1
-      end
-    end
-  else
-    self:clear_selected_entities()
-  end
-end
-
-function Main:left_mouse_up(x, y)
-  -- we've got our mouse over the ui so...
-  if not loveframes.hoverobject then
-    self:clear_selected_entities()
-  end
-
-  if self.selection_box then
-    local x, y, w, h = unpack(self.selection_box)
-    local shapes = Collider:shapesInRange(x, y, x + w, y + h)
-    for _,shape in pairs(shapes) do
-      local entity = shape.parent
-      if instanceOf(Crew, entity) then
-        self.selected_entities[entity.id] = entity
-        entity.selected = true
-      end
-    end
-  end
-  self.left_mouse_down_pos = nil
-  self.selection_box = nil
-end
-
-function Main:right_mouse_up(x, y)
-  self.right_mouse_down_pos = nil
-end
-
-function Main:mouse_wheel_up(x, y)
-  local center_x, center_y = g.getWidth() / 2, g.getHeight() / 2
-  local cw, ch = center_x * self.camera.scaleX, center_y * self.camera.scaleY
-  self.camera:scale(0.9, 0.9)
-  local delta_cw, delta_ch = cw - center_x * self.camera.scaleX, ch - center_y * self.camera.scaleY
-  self.camera:move(delta_cw, delta_ch)
-end
-
-function Main:mouse_wheel_down(x, y)
-  local center_x, center_y = g.getWidth() / 2, g.getHeight() / 2
-  local cw, ch = center_x * self.camera.scaleX, center_y * self.camera.scaleY
-  self.camera:scale(1.1, 1.1)
-  local delta_cw, delta_ch = cw - center_x * self.camera.scaleX, ch - center_y * self.camera.scaleY
-  self.camera:move(delta_cw, delta_ch)
-end
-
-
-function Main:left_mouse_update(x, y)
-  if self.left_mouse_down_pos then
-    local camera_x, camera_y = self.camera:mousePosition(x, y)
-    local down = self.left_mouse_down_pos
-    self.selection_box = {down.x, down.y, camera_x - down.x, camera_y - down.y}
-  end
-end
-
-function Main:right_mouse_update(x, y)
-end
-
 function Main:mousepressed(x, y, button)
-  if game.ui_active then return end -- slippery slope, man. Would be much better to find another way.
-
-  local action = self.control_map.mouse.pressed[button]
-  if is_func(action) then action(self, x, y) end
+  self.input_manager:mousepressed(x, y, button)
 end
 
 function Main:mousereleased(x, y, button)
-  local action = self.control_map.mouse.released[button]
-  if is_func(action) then action(self, x, y) end
+  self.input_manager:mousereleased(x, y, button)
 end
 
 function Main:keypressed(key, unicode)
-  local action = self.control_map.keyboard.pressed[key]
-  if is_func(action) then action(self, x, y) end
+  self.input_manager:keypressed(key, unicode)
 end
 
 function Main:keyreleased(key, unicode)
-  local action = self.control_map.keyboard.released[key]
-  if is_func(action) then action(self, x, y) end
+  self.input_manager:keyreleased(key, unicode)
 end
 
 function Main:joystickpressed(joystick, button)

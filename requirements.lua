@@ -56,6 +56,7 @@ require 'resources'
 require 'lod'
 require 'game_ui'
 require 'player'
+require 'game_input'
 
 local function require_all(directory)
   local lfs = love.filesystem

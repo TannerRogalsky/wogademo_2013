@@ -98,6 +98,12 @@ function GameUI:initialize(game)
 
     game:clear_selected_entities()
   end
+  function self.collect_resources_button.OnMouseEnter(button)
+    self.game.input_manager:gotoState("UIActive")
+  end
+  function self.collect_resources_button.OnMouseExit(button)
+    self.game.input_manager:gotoState("UIInactive")
+  end
 end
 
 function GameUI:show_upgrade_ui(gun)
@@ -114,7 +120,12 @@ function GameUI:show_upgrade_ui(gun)
   ui.upgrade_frame:SetName("Upgrade")
   ui.upgrade_frame:SetScreenLocked(true)
   function ui.upgrade_frame.OnClose(object)
-    self.game.ui_active = false
+    self.game.input_manager:gotoState("UIInactive")
+  end
+  function ui.upgrade_frame.OnMouseEnter(object)
+    self.game.input_manager:gotoState("UIActive")
+  end
+  function ui.upgrade_frame.OnMouseExit(object)
   end
 
   ui.base_image = loveframes.Create("image", ui.upgrade_frame)
