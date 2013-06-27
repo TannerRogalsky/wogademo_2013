@@ -87,13 +87,14 @@ function GameUI:initialize(game)
           local distance = math.sqrt(math.pow(resource_x - x, 2) + math.pow(resource_y - y, 2))
           distances[resource] = distance
 
-          if Crew.targeted_resources[resource] == nil and distance < distances[closest] then
+          if Crew.targeted_resources[resource.id] == nil and distance < distances[closest] then
             closest = resource
           end
         end
 
         -- we found the closest resource and nobody is headed toward it
-        if closest and Crew.targeted_resources[closest] == nil then
+        if closest and Crew.targeted_resources[closest.id] == nil then
+          Crew.targeted_resources[closest.id] = closest
           local path = game.map:find_path(entity.x, entity.y, closest.x, closest.y)
 
           local is_pathing = entity.follow_path_target ~= nil
@@ -108,6 +109,8 @@ function GameUI:initialize(game)
 
           if not is_pathing then
             entity:follow_path(path, nil, function()
+              Crew.targeted_resources[closest.id] = nil
+
               -- got to the resource
               local resources = entity.follow_path_target:get_contents_of_type(Resource)
               for id,resource in pairs(resources) do
