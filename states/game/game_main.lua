@@ -103,7 +103,7 @@ function Main:render()
   end
 
   -- g.setColor(COLORS.blue:rgb())
-  -- for k,v in pairs(Collider:shapesInRange(-100, -100, 700, 700)) do
+  -- for k,v in pairs(Collider:shapesInRange(-100, -100, 3000, 2000)) do
   --   v:draw("line")
   -- end
 

@@ -2,15 +2,21 @@ Enemy = class('Enemy', MapEntity)
 Enemy:include(Movable)
 Enemy:include(FollowsPath)
 Enemy.static.instances = {}
+Enemy.static.width = 3
+Enemy.static.height = 3
 
-function Enemy:initialize(parent, x, y)
-  MapEntity.initialize(self, parent, x, y, 1, 1)
+function Enemy:initialize(parent, x, y, width, height)
+  MapEntity.initialize(self, parent, x, y, Enemy.width, Enemy.height)
 
   self.z = 151
   self.speed = 50
+  self.angle = 0
+  self.health = 10
 
   self.damage = 3
   self.attack_speed = 0.6
+
+  self.image = game.preloaded_image["enemy_large.png"]
 
   self.resource_drop_chance = 1 / 10
 
@@ -37,12 +43,22 @@ function Enemy:destroy()
 end
 
 function Enemy:render()
-  g.setColor(COLORS.cyan:rgb())
-  g.rectangle("fill", self.world_x, self.world_y, self.width * self.parent.tile_width, self.height * self.parent.tile_height)
+  g.setColor(COLORS.white:rgb())
+  local _, _, w, h = self:world_bounds()
+  local x, y = self:world_center()
+
+  g.draw(self.image, x, y, self.angle + math.pi / 2, 1, 1, w / 2, h / 2)
 end
 
 function Enemy:on_collide(dt, other, mtv_x, mtv_y)
   if instanceOf(Bullet, other) then
+    self:damage_for(other.damage)
+  end
+end
+
+function Enemy:damage_for(damage_value)
+  self.health = self.health - damage_value
+  if self.health <= 0 then
     self:destroy()
   end
 end

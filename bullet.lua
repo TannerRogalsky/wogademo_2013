@@ -8,6 +8,7 @@ function Bullet:initialize(x, y, vel_x, vel_y, target)
   self.x, self.y = x, y
   self.vel_x, self.vel_y = vel_x, vel_y
   self.target = target
+  self.damage = 0
 
   self.color = {}
   for k,v in pairs(COLORS.red) do

@@ -142,6 +142,7 @@ function Gun:fire()
   local speed = 200
   local firing_angle = self.angle + math.pi
   local bullet = Bullet:new(center_x, center_y, speed * math.cos(firing_angle), speed * math.sin(firing_angle))
+  bullet.damage = self.damage
 end
 
 function Gun:clear_target()

@@ -101,11 +101,11 @@ function Map:spawn_enemy(type, x, y)
   -- random spot on outside row
   if x == nil or y == nil then
     if math.random(2) == 2 then
-      x = math.random(self.width)
-      y = math.random(2) == 2 and 1 or self.height
+      x = math.random(self.width - type.width)
+      y = math.random(2) == 2 and 1 or self.height - type.height
     else
-      x = math.random(2) == 2 and 1 or self.width
-      y = math.random(self.height)
+      x = math.random(2) == 2 and 1 or self.width - type.width
+      y = math.random(self.height - type.height)
     end
   end
 
