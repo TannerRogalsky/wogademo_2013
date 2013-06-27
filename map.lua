@@ -95,21 +95,43 @@ function Map:world_to_grid_coords(x, y)
   return math.floor(x / self.tile_width + self.x + 1), math.floor(y / self.tile_height - self.y + 1)
 end
 
-function Map:spawn_enemy(type, x, y)
-  assert(type, Enemy)
+
+
+function Map:spawn_enemy(enemy_type, x, y)
+  if enemy_type == nil then
+    local enemy_weights = {
+      {weight = 10, enemy = SmallSawEnemy},
+      {weight = 1, enemy = BigGundamEnemy}
+    }
+
+    local total_weight = 1
+    for _,pair in ipairs(enemy_weights) do
+      total_weight = total_weight + pair.weight
+    end
+
+    local summed_weight, sampled_weight = 1, math.random(total_weight)
+    for _,pair in ipairs(enemy_weights) do
+      summed_weight = summed_weight + pair.weight
+
+      if summed_weight >= sampled_weight then
+        enemy_type = pair.enemy
+        break
+      end
+    end
+  end
 
   -- random spot on outside row
   if x == nil or y == nil then
     if math.random(2) == 2 then
-      x = math.random(self.width - type.width)
-      y = math.random(2) == 2 and 1 or self.height - type.height
+      x = math.random(self.width - enemy_type.width)
+      y = math.random(2) == 2 and 1 or self.height - enemy_type.height
     else
-      x = math.random(2) == 2 and 1 or self.width - type.width
-      y = math.random(self.height - type.height)
+      x = math.random(2) == 2 and 1 or self.width - enemy_type.width
+      y = math.random(self.height - enemy_type.height)
     end
   end
 
-  local enemy = type:new(self, x, y)
+  local enemy = enemy_type:new(self, x, y)
   self:add_entity(enemy)
   return enemy
 end

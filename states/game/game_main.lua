@@ -63,9 +63,8 @@ function Main:enteredState()
   self.ui:update_crew_text()
 
   -- start spawning enemies
-  local enemies = {SmallSawEnemy, BigGundamEnemy}
   cron.every(0.1, function()
-    local enemy = self.map:spawn_enemy(enemies[math.random(#enemies)])
+    local enemy = self.map:spawn_enemy()
     local target = self.map:get_closest_room(enemy.x, enemy.y)
     enemy:gotoState("Moving", target)
   end)
