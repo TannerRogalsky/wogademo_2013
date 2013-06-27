@@ -74,12 +74,6 @@ function Main:update(dt)
   self.input_manager:update(dt)
   Collider:update(dt)
 
-  -- local s = ""
-  -- for i,v in ipairs(self.crew) do
-  --   s = s .. v.angle .. ", "
-  -- end
-  -- print(s)
-
   for id,room in pairs(self.map.rooms) do
     room:update(dt)
   end
