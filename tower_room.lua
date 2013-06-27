@@ -7,6 +7,7 @@ function TowerRoom:initialize(parent, x, y, width, height)
   self.crew_positions = {}
   self.occupied_crew_positions = {}
   self.crew = {}
+  self.tower = nil
 
   self.image = game.preloaded_image["room_filled.png"]
 
@@ -153,6 +154,17 @@ function TowerRoom:render()
     g.setColor(COLORS.yellow:rgb())
     g.rectangle("line", self.world_x, self.world_y, pixel_width - 1, pixel_height - 1)
   end
+end
+
+function TowerRoom:get_border_tiles()
+  local tower = self.tower
+  local border_tiles = {}
+  for _, _, tile in self.parent:each(self.x - 1, self.y - 1, self.width + 2, self.height + 2) do
+    if tower.border_tiles[tile.id] then
+      table.insert(border_tiles, tile)
+    end
+  end
+  return border_tiles
 end
 
 TowerRoom.__lt = MapEntity.__lt
