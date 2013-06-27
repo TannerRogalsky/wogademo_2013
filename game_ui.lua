@@ -106,18 +106,20 @@ function GameUI:initialize(game)
             current_room:remove_crew(entity)
           end
 
-          entity:follow_path(path, nil, function()
-            -- got to the resource
-            local resources = entity.follow_path_target:get_contents_of_type(Resource)
-            for id,resource in pairs(resources) do
-              self.game.player:collect(resource)
-              resource:destroy()
-            end
+          if not is_pathing then
+            entity:follow_path(path, nil, function()
+              -- got to the resource
+              local resources = entity.follow_path_target:get_contents_of_type(Resource)
+              for id,resource in pairs(resources) do
+                self.game.player:collect(resource)
+                resource:destroy()
+              end
 
-            -- TODO: this is sort of a hack and makes me sad
-            -- follows_path still needs some work, you know?
-            cron.after(0.0001, find_and_path, entity)
-          end)
+              -- TODO: this is sort of a hack and makes me sad
+              -- follows_path still needs some work, you know?
+              cron.after(0.0001, find_and_path, entity)
+            end)
+          end
         end
       end
 

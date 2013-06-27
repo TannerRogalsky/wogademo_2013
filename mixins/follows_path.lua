@@ -22,7 +22,8 @@ local FollowsPath = {
         self:insert_into_grid()
         self.angle = math.atan2(delta_y, delta_x)
 
-        self.follow_path_tween_id = tween(speed, self, {world_x = new_x, world_y = new_y}, "linear", tween_to_index, index + 1)
+        local new_pos = {world_x = new_x, world_y = new_y}
+        self.follow_path_tween_id = tween(speed, self, new_pos, "linear", tween_to_index, index + 1)
       else
         self.follow_path_tween_id = nil
         -- clean up the cron and make sure to reset the physics body just in case
