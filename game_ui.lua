@@ -144,9 +144,6 @@ function GameUI:show_upgrade_ui(gun)
 
   local ui = {}
 
-  self.game.ui_active = true
-  local x, y, w, h = gun:world_bounds()
-
   ui.upgrade_frame = loveframes.Create("frame")
   ui.upgrade_frame:SetSize(200, 200)
   ui.upgrade_frame:Center()
@@ -161,17 +158,34 @@ function GameUI:show_upgrade_ui(gun)
   function ui.upgrade_frame.OnMouseExit(object)
   end
 
-  ui.base_image = loveframes.Create("image", ui.upgrade_frame)
+  ui.image_frame = loveframes.Create("frame", ui.upgrade_frame)
+  ui.image_frame:SetSize(50, 50)
+  ui.image_frame:SetPos(ui.upgrade_frame:GetWidth() - ui.image_frame:GetWidth() - 10, 30)
+  ui.image_frame:SetDraggable(false)
+  ui.image_frame:ShowCloseButton(false)
+  function ui.image_frame:draw()
+    for _, child in ipairs(self.children) do
+      child:draw()
+    end
+  end
+
+  local x, y, w, h = gun:world_bounds()
+
+  ui.base_image = loveframes.Create("image", ui.image_frame)
   ui.base_image:SetImage(gun.base_image)
   ui.base_image:SetSize(50, 50)
-  ui.base_image:SetPos(ui.upgrade_frame:GetWidth() - ui.base_image:GetWidth() - 10, 30)
   ui.base_image:SetScale(ui.base_image:GetWidth() / w, ui.base_image:GetHeight() / h)
+  ui.base_image:SetPos(0, 0)
 
-  ui.gun_image = loveframes.Create("image", ui.upgrade_frame)
+  local image_delta_x = gun.base_image:getWidth() - gun.image:getWidth()
+  local image_delta_y = gun.base_image:getWidth() - gun.image:getHeight()
+
+  ui.gun_image = loveframes.Create("image", ui.image_frame)
   ui.gun_image:SetImage(gun.image)
   ui.gun_image:SetSize(50, 50)
-  ui.gun_image:SetPos(ui.upgrade_frame:GetWidth() - ui.gun_image:GetWidth() - 10, 30)
-  ui.gun_image:SetScale(ui.gun_image:GetWidth() / w, ui.gun_image:GetHeight() / h)
+  local image_scale_x, image_scale_y = ui.gun_image:GetWidth() / w, ui.gun_image:GetHeight() / h
+  ui.gun_image:SetScale(image_scale_x, image_scale_y)
+  ui.gun_image:SetPos(image_delta_x * image_scale_x / 2, image_delta_y * image_scale_y / 2)
 
   local padding_x, padding_y = 5, upgrade_font:getHeight() + 5
 
