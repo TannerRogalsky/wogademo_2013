@@ -2,21 +2,19 @@ Enemy = class('Enemy', MapEntity)
 Enemy:include(Movable)
 Enemy:include(FollowsPath)
 Enemy.static.instances = {}
-Enemy.static.width = 3
-Enemy.static.height = 3
 
 function Enemy:initialize(parent, x, y, width, height)
-  MapEntity.initialize(self, parent, x, y, Enemy.width, Enemy.height)
+  MapEntity.initialize(self, parent, x, y, width, height)
 
   self.z = 151
   self.speed = 50
   self.angle = 0
-  self.health = 10
+  self.health = 1
 
-  self.damage = 3
+  self.damage = 1
   self.attack_speed = 0.6
 
-  self.image = game.preloaded_image["enemy_large.png"]
+  self.image = nil
 
   self.resource_drop_chance = 1 / 10
 

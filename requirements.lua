@@ -52,7 +52,6 @@ require 'gun'
 require 'bullet'
 require 'crew'
 require 'enemy'
-require 'small_saw_enemy'
 require 'resource'
 require 'lod'
 require 'game_ui'
@@ -71,3 +70,7 @@ local function require_all(directory)
   end
 end
 require_all("states")
+
+-- you need to include the states before you subclass or they don't get inherited properly
+require 'small_saw_enemy'
+require 'big_gundam_enemy'
