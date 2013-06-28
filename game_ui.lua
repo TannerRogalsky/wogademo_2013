@@ -235,9 +235,24 @@ function GameUI:update_upgrade_text(gun)
   local level = gun.max_crew
   local stats = gun.crew_upgrades[level]
 
-  self.upgrade_ui.upgrade_button:SetText("Upgrade: " .. gun:upgrade_cost() .. " credits")
-  self.upgrade_ui.level_text:SetText({{COLORS.black:rgb()}, "Level: " .. level})
-  self.upgrade_ui.damage_text:SetText({{COLORS.black:rgb()}, "Damage: " .. stats.damage})
-  self.upgrade_ui.shots_text:SetText({{COLORS.black:rgb()}, "Shots/minute: " .. 60 / stats.firing_speed})
-  self.upgrade_ui.rotation_text:SetText({{COLORS.black:rgb()}, "Degrees/second: " .. math.deg(stats.rotation_speed)})
+  local button_text, level_text, damage_text, shots_text, rotation_text
+
+  -- max level
+  if level == #gun.crew_upgrades then
+    self.upgrade_ui.upgrade_button:SetEnabled(false)
+    button_text = "Upgrade: MAX"
+  else
+    button_text = "Upgrade: " .. gun:upgrade_cost() .. " credits"
+  end
+
+  level_text = {{COLORS.black:rgb()}, "Level: " .. level}
+  damage_text = {{COLORS.black:rgb()}, "Damage: " .. stats.damage}
+  shots_text = {{COLORS.black:rgb()}, "Shots/minute: " .. 60 / stats.firing_speed}
+  rotation_text = {{COLORS.black:rgb()}, "Degrees/second: " .. math.deg(stats.rotation_speed)}
+
+  self.upgrade_ui.upgrade_button:SetText(button_text)
+  self.upgrade_ui.level_text:SetText(level_text)
+  self.upgrade_ui.damage_text:SetText(damage_text)
+  self.upgrade_ui.shots_text:SetText(shots_text)
+  self.upgrade_ui.rotation_text:SetText(rotation_text)
 end
