@@ -10,6 +10,7 @@ function TowerRoom:initialize(parent, x, y, width, height)
   self.tower = nil
 
   self.image = game.preloaded_image["room_filled.png"]
+  self.crew_needed_image = game.preloaded_image["crew_needed.png"]
 
   for _, _, tile in self.parent:each(self.x, self.y, self.width, self.height) do
     -- check if you're in the outside row
@@ -148,6 +149,13 @@ function TowerRoom:render()
   -- for id,gate in pairs(self.gates) do
   --   gate:render()
   -- end
+  local max_crew = self:get_max_crew()
+  for index, crew_tile in ipairs(self.crew_positions) do
+    if index > max_crew then break end
+
+    local x, y = (crew_tile.x - 1) * crew_tile.parent.tile_width, (crew_tile.y - 1) * crew_tile.parent.tile_height
+    g.draw(self.crew_needed_image, x, y, 0, 0.5)
+  end
 
   local x, y = game.camera:mousePosition()
   if self:contains(x, y) then
