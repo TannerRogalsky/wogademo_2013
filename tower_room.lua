@@ -149,26 +149,21 @@ end
 
 function TowerRoom:render()
   local pixel_width, pixel_height = self.width * self.parent.tile_width, self.height * self.parent.tile_height
+  local scale = 0.5
 
   g.setColor(COLORS.white:rgb())
-  g.draw(self.image, self.world_x, self.world_y, 0, 0.5)
+  g.draw(self.image, self.world_x, self.world_y, 0, scale)
 
-  -- for id,wall in pairs(self.walls) do
-  --   wall:render()
-  -- end
-  -- for id,gate in pairs(self.gates) do
-  --   gate:render()
-  -- end
   local max_crew = self:get_max_crew()
   for index, crew_tile in ipairs(self.crew_positions) do
     if index > max_crew then break end
 
+    -- there's no crew stationed here
     if self.occupied_crew_positions[crew_tile] == nil then
       local w, h = crew_tile.parent.tile_width, crew_tile.parent.tile_height
       local x = (crew_tile.x - 1) * w + w / 2
       local y = (crew_tile.y - 1) * h + h / 2
       local angle = 0
-      local scale = 0.5
       g.draw(self.crew_needed_image, x, y, angle, scale, scale, w * scale * 2, h * scale * 2)
     end
   end
