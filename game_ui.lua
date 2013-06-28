@@ -62,10 +62,12 @@ function GameUI:initialize(game)
   self.tower_health_bar:SetLerp(true)
 
   -- get resources button
-  self.collect_resources_button = loveframes.Create("button")
-  self.collect_resources_button:SetText("Collect")
+  self.collect_resources_button = loveframes.Create("imagebutton")
+  self.collect_resources_button:SetText("")
+  self.collect_resources_button:SetImage(game.preloaded_image["ui_sendoutcrew.png"])
+  self.collect_resources_button:SizeToImage()
   self.collect_resources_button:SetPos(g.getWidth() - self.collect_resources_button:GetWidth() - 20,
-  self.crew_frame:GetY() + self.crew_frame:GetHeight() + 10)
+    self.crew_frame:GetY() + self.crew_frame:GetHeight() + 10)
   function self.collect_resources_button.OnClick(button)
     local entities = game.selected_entities
 
@@ -137,6 +139,13 @@ function GameUI:initialize(game)
   function self.collect_resources_button.OnMouseExit(button)
     self.game.input_manager:gotoState("UIInactive")
   end
+
+  self.repair_tower_button = loveframes.Create("imagebutton")
+  self.repair_tower_button:SetText("")
+  self.repair_tower_button:SetImage(game.preloaded_image["ui_buycrew.png"])
+  self.repair_tower_button:SizeToImage()
+  self.repair_tower_button:SetPos(self.collect_resources_button:GetX() - self.repair_tower_button:GetWidth() - 20,
+    self.crew_frame:GetY() + self.crew_frame:GetHeight() + 10)
 end
 
 function GameUI:show_upgrade_ui(gun)
