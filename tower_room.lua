@@ -30,6 +30,16 @@ function TowerRoom:initialize(parent, x, y, width, height)
     end
   end
 
+  -- this is hard-coded, restricting the possible size of rooms
+  -- should be done programmatically, maybe by checking neighbors
+  -- or maybe this is the kind of thing that tiled would be good at
+  self.standing_angles = {}
+  self.standing_angles[self.crew_positions[1]] = math.rad(-45)
+  self.standing_angles[self.crew_positions[2]] = math.rad(180 + 45)
+  self.standing_angles[self.crew_positions[3]] = math.rad(-45)
+  self.standing_angles[self.crew_positions[4]] = math.rad(45)
+  self.standing_angles[self.crew_positions[5]] = math.rad(180 - 45)
+
   self.z = 100
 
   self.emplacements = {}
@@ -153,8 +163,14 @@ function TowerRoom:render()
   for index, crew_tile in ipairs(self.crew_positions) do
     if index > max_crew then break end
 
-    local x, y = (crew_tile.x - 1) * crew_tile.parent.tile_width, (crew_tile.y - 1) * crew_tile.parent.tile_height
-    g.draw(self.crew_needed_image, x, y, 0, 0.5)
+    if self.occupied_crew_positions[crew_tile] == nil then
+      local w, h = crew_tile.parent.tile_width, crew_tile.parent.tile_height
+      local x = (crew_tile.x - 1) * w + w / 2
+      local y = (crew_tile.y - 1) * h + h / 2
+      local angle = 0
+      local scale = 0.5
+      g.draw(self.crew_needed_image, x, y, angle, scale, scale, w * scale * 2, h * scale * 2)
+    end
   end
 
   local x, y = game.camera:mousePosition()

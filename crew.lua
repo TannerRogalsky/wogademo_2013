@@ -25,9 +25,11 @@ function Crew:at_path_target()
   local room = tile:get_first_content_of_type(TowerRoom)
 
   room:add_crew(self)
+  self:set_standing_angle(room, tile)
 end
 
-function Crew:update(dt)
+function Crew:set_standing_angle(room, tile)
+  self.angle = room.standing_angles[tile] - math.pi / 2
 end
 
 function Crew:render()

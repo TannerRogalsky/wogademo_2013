@@ -56,6 +56,7 @@ function Main:enteredState()
       room:add_crew(entity)
       self.player.crew = self.player.crew + 1
       self.map:add_entity(entity)
+      entity:set_standing_angle(room, target)
 
       table.insert(self.crew, entity)
     end
