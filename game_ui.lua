@@ -13,7 +13,7 @@ function GameUI:initialize(game)
   self.ui_font = g.newFont(20)
 
   local function draw_rect_and_children(object)
-    g.setColor(COLORS.white:rgb())
+    g.setColor(object.background_color)
     g.rectangle("fill", object:GetX(), object:GetY(), object:GetWidth(), object:GetHeight())
     g.setColor(COLORS.black:rgb())
     g.rectangle("line", object:GetX(), object:GetY(), object:GetWidth(), object:GetHeight())
@@ -25,31 +25,31 @@ function GameUI:initialize(game)
 
   -- credits box
   self.credits_frame = loveframes.Create("frame")
-  self.credits_frame:SetSize(200, 40)
+  self.credits_frame:SetSize(150, 36)
   self.credits_frame:SetPos(g.getWidth() - self.credits_frame:GetWidth() - 20, 10)
   self.credits_frame:SetDraggable(false)
   self.credits_frame:ShowCloseButton(false)
   self.credits_frame.draw = draw_rect_and_children
+  self.credits_frame.background_color = {COLORS.white:rgb()}
 
   self.credits_text = loveframes.Create("text")
   self.credits_text:SetParent(self.credits_frame)
-  self.credits_text:SetPos(20, 20)
-  self.credits_text:CenterY()
+  self.credits_text:SetPos(5, 10)
   self.credits_text:SetFont(self.ui_font)
   self:update_credits_text()
 
   -- crew box
   self.crew_frame = loveframes.Create("frame")
-  self.crew_frame:SetSize(200, 40)
+  self.crew_frame:SetSize(150, 36)
   self.crew_frame:SetPos(g.getWidth() - self.crew_frame:GetWidth() - 20, self.credits_frame:GetY() + self.credits_frame:GetHeight() + 10)
   self.crew_frame:SetDraggable(false)
   self.crew_frame:ShowCloseButton(false)
   self.crew_frame.draw = draw_rect_and_children
+  self.crew_frame.background_color = {COLORS.white:rgb()}
 
   self.crew_text = loveframes.Create("text")
   self.crew_text:SetParent(self.crew_frame)
-  self.crew_text:SetPos(20, 20)
-  self.crew_text:CenterY()
+  self.crew_text:SetPos(5, 10)
   self.crew_text:SetFont(self.ui_font)
   self:update_crew_text()
 
@@ -208,7 +208,10 @@ function GameUI:show_upgrade_ui(gun)
       gun:upgrade()
       self:update_upgrade_text(gun)
     else
-      print("no can do, guv")
+      tween.reset(self.credits_bg_tween_id)
+      self.credits_bg_tween_id = tween(0.3, self.credits_frame.background_color, {COLORS.red:rgb()}, "linear", function()
+        tween(0.3, self.credits_frame.background_color, {COLORS.white:rgb()})
+      end)
     end
   end
 
