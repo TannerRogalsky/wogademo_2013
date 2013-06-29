@@ -1,6 +1,13 @@
 GameUI = class('GameUI', Base)
 GameUI.static.instance = nil
 
+local function on_mouse_enter()
+  game.input_manager:gotoState("UIActive")
+end
+local function on_mouse_exit()
+  game.input_manager:gotoState("UIInactive")
+end
+
 function GameUI:initialize(game)
   if GameUI.instance then
     return GameUI.instance
@@ -133,19 +140,25 @@ function GameUI:initialize(game)
 
     game:clear_selected_entities()
   end
-  function self.collect_resources_button.OnMouseEnter(button)
-    self.game.input_manager:gotoState("UIActive")
-  end
-  function self.collect_resources_button.OnMouseExit(button)
-    self.game.input_manager:gotoState("UIInactive")
-  end
+  self.collect_resources_button.OnMouseEnter = on_mouse_enter
+  self.collect_resources_button.OnMouseExit = on_mouse_exit
+
+  self.buy_crew_button = loveframes.Create("imagebutton")
+  self.buy_crew_button:SetText("")
+  self.buy_crew_button:SetImage(game.preloaded_image["ui_buycrew.png"])
+  self.buy_crew_button:SizeToImage()
+  self.buy_crew_button:SetPos(self.collect_resources_button:GetX() - self.buy_crew_button:GetWidth() - 20,
+    self.crew_frame:GetY() + self.crew_frame:GetHeight() + 10)
 
   self.repair_tower_button = loveframes.Create("imagebutton")
   self.repair_tower_button:SetText("")
-  self.repair_tower_button:SetImage(game.preloaded_image["ui_buycrew.png"])
+  self.repair_tower_button:SetImage(game.preloaded_image["ui_wall.png"])
   self.repair_tower_button:SizeToImage()
-  self.repair_tower_button:SetPos(self.collect_resources_button:GetX() - self.repair_tower_button:GetWidth() - 20,
-    self.crew_frame:GetY() + self.crew_frame:GetHeight() + 10)
+  self.repair_tower_button:SetPos(g.getWidth() - self.repair_tower_button:GetWidth() - 20,
+    self.tower_health_bar:GetY() - self.repair_tower_button:GetHeight() - 10)
+  function self.repair_tower_button.OnClick()
+    self:show_wall_ui()
+  end
 end
 
 function GameUI:show_upgrade_ui(gun)
@@ -158,14 +171,8 @@ function GameUI:show_upgrade_ui(gun)
   ui.upgrade_frame:Center()
   ui.upgrade_frame:SetName("Upgrade")
   ui.upgrade_frame:SetScreenLocked(true)
-  function ui.upgrade_frame.OnClose(object)
-    self.game.input_manager:gotoState("UIInactive")
-  end
-  function ui.upgrade_frame.OnMouseEnter(object)
-    self.game.input_manager:gotoState("UIActive")
-  end
-  function ui.upgrade_frame.OnMouseExit(object)
-  end
+  ui.upgrade_frame.OnMouseEnter = on_mouse_enter
+  ui.upgrade_frame.OnClose = on_mouse_exit
 
   ui.image_frame = loveframes.Create("frame", ui.upgrade_frame)
   ui.image_frame:SetSize(50, 50)
@@ -208,10 +215,7 @@ function GameUI:show_upgrade_ui(gun)
       gun:upgrade()
       self:update_upgrade_text(gun)
     else
-      tween.reset(self.credits_bg_tween_id)
-      self.credits_bg_tween_id = tween(0.3, self.credits_frame.background_color, {COLORS.red:rgb()}, "linear", function()
-        tween(0.3, self.credits_frame.background_color, {COLORS.white:rgb()})
-      end)
+      self:flash_credits_red()
     end
   end
 
@@ -267,4 +271,88 @@ function GameUI:update_upgrade_text(gun)
   self.upgrade_ui.damage_text:SetText(damage_text)
   self.upgrade_ui.shots_text:SetText(shots_text)
   self.upgrade_ui.rotation_text:SetText(rotation_text)
+end
+
+function GameUI:flash_credits_red(time)
+  time = time or 0.6
+
+  tween.reset(self.credits_bg_tween_id)
+  self.credits_bg_tween_id = tween(time / 2, self.credits_frame.background_color, {COLORS.red:rgb()}, "linear", function()
+    tween(time / 2, self.credits_frame.background_color, {COLORS.white:rgb()})
+  end)
+end
+
+function GameUI:update_health_bar()
+  local tower = self.game.tower
+  self.tower_health_bar:SetMinMax(0, tower.max_health)
+  self.tower_health_bar:SetValue(tower.health)
+end
+
+function GameUI:show_wall_ui()
+  local tower = self.game.tower
+  local player = self.game.player
+
+  local wall_frame = loveframes.Create("frame")
+  wall_frame:SetSize(200, 130)
+  wall_frame:Center()
+  wall_frame:SetName("Walls")
+  wall_frame:SetScreenLocked(true)
+  wall_frame.OnMouseEnter = on_mouse_enter
+  wall_frame.OnClose = on_mouse_exit
+
+  local x_offset = 10
+  local upgrade_amount = 10
+
+  -- button declarations
+  local repair_button = loveframes.Create("button", wall_frame)
+  local repair_all_button = loveframes.Create("button", wall_frame)
+  local upgrade_health_button = loveframes.Create("button", wall_frame)
+
+  -- update function closes over the buttons
+  local function update_wall_ui()
+    repair_button:SetText("Repair 10 Health for 100 Credits")
+    repair_button:SetEnabled(player.resources >= 100 and tower.health <= tower.max_health - 10)
+
+    local health_delta = tower.max_health - tower.health
+    local cost = health_delta * 10
+    repair_all_button:SetText("Repair All Health for " .. cost .. " Credits")
+    repair_all_button:SetEnabled(player.resources >= cost and tower.health <= tower.max_health - 1)
+
+    cost = upgrade_amount * 100
+    upgrade_health_button:SetText("Add " .. upgrade_amount .. " Health for " .. cost .. " Credits")
+    upgrade_health_button:SetEnabled(player.resources >= cost)
+  end
+
+  -- set up all the other crap
+  repair_button:SetWidth(wall_frame:GetWidth() - x_offset * 2)
+  repair_button:SetPos(x_offset, 30)
+  function repair_button.OnClick()
+    tower:repair_for(10)
+    player:charge(10 * 10)
+    self:update_credits_text()
+    update_wall_ui()
+  end
+
+  repair_all_button:SetWidth(wall_frame:GetWidth() - x_offset * 2)
+  repair_all_button:SetPos(x_offset, repair_button:GetStaticY() + repair_button:GetHeight() + 10)
+  function repair_all_button.OnClick()
+    local health_delta = tower.max_health - tower.health
+    tower:repair_for(health_delta)
+    player:charge(health_delta * 10)
+    self:update_credits_text()
+    update_wall_ui()
+  end
+
+  upgrade_health_button:SetWidth(wall_frame:GetWidth() - x_offset * 2)
+  upgrade_health_button:SetPos(x_offset, repair_all_button:GetStaticY() + repair_all_button:GetHeight() + 10)
+  function upgrade_health_button.OnClick()
+    tower.max_health = tower.max_health + upgrade_amount
+    tower:repair_for(upgrade_amount)
+    player:charge(upgrade_amount * 100)
+    self:update_credits_text()
+    update_wall_ui()
+  end
+
+  -- initial update
+  update_wall_ui()
 end

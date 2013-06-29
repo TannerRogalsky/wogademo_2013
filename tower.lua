@@ -3,6 +3,7 @@ Tower = class('Tower', MapEntity)
 function Tower:initialize(parent, x, y)
   MapEntity.initialize(self, parent, x, y)
 
+  self.max_health = 100
   self.health = 100
   self.rooms = {}
 
@@ -48,9 +49,14 @@ function Tower:add_to_map(map)
   end
 end
 
-function Tower:damage_for(damage)
-  self.health = self.health - damage
-  GameUI.instance.tower_health_bar:SetValue(self.health)
+function Tower:damage_for(health)
+  self.health = self.health - health
+  GameUI.instance:update_health_bar()
+end
+
+function Tower:repair_for(health)
+  self.health = self.health + health
+  GameUI.instance:update_health_bar()
 end
 
 function Tower:render()

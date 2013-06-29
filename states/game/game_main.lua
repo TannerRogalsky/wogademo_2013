@@ -23,6 +23,7 @@ function Main:enteredState()
   self.tower = Tower:new(self.map,
     math.floor(self.map.width / 2) - math.floor(num_room_x * room_width / 2),
     math.floor(self.map.height / 2) - math.floor(num_room_y * room_height / 2))
+  GameUI.instance:update_health_bar()
 
   for i=0,num_room_x - 1 do
     for j=0,num_room_y - 1 do
