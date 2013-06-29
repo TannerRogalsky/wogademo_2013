@@ -21,9 +21,13 @@ This is a template that is meant to be appropriate for any Love2D game. It inclu
 * Movable
 
 ## TODO
-* Resource collection
 * Survivors
-* Art integration
+* Improve resource collection
 * Bullet's over the tower need to not show in base mode
 * Tower buying feature and UI
-* Consider a more stateful way of handling input
+* Art integration (ongoing)
+
+## Bugs and Hangups
+* Resource collecting crew sometimes go off the screen
+* It's easy to lose track of where reasource collecting crew are
+* Once all your guns are full, there's no place for idling crew to go
