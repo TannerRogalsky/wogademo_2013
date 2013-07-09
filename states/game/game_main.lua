@@ -42,7 +42,6 @@ function Main:enteredState()
     room:set_traversal_costs()
     local gun = Gun:new(self.map, room.x, room.y, room.width, room.height)
     room.emplacements[gun.id] = gun
-    self.z = 1
     self.map:add_entity(gun)
   end
 
